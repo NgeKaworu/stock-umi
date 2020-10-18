@@ -1,34 +1,24 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import styled from "styled-components";
 
-import {
-  Button,
-  Divider,
-  Empty,
-  Form,
-  InputNumber,
-  PageHeader,
-  Select,
-  Spin,
-} from "antd";
+import { Button, Form, InputNumber, Select } from "antd";
 
 import { HomeOutlined, InfoCircleOutlined } from "@ant-design/icons";
 
 import theme from "@/theme";
 import moment from "moment";
 
-import { Annals, CurrentInfo, InfoTime } from "@/models/stock";
+import { CurrentInfo, Enterprise, InfoTime, Stock } from "@/models/stock";
 
 interface rootState {
   stock: {
     listDate: InfoTime[];
-    annalsList: Annals[];
-    currentList: CurrentInfo[];
+    enterpriseList: Enterprise[];
   };
   loading: {
-    models: { record: boolean };
+    global: boolean;
   };
 }
 
@@ -56,21 +46,62 @@ const Content = styled.div`
 `;
 
 export default () => {
+  const [calcLoading, setCalcLoading] = useState(false);
   const [form] = Form.useForm();
 
-  const { listDate } = useSelector((s: rootState) => ({
+  const { listDate, enterpriseList, isLoading } = useSelector((
+    s: rootState,
+  ) => ({
     listDate: s.stock.listDate,
+    enterpriseList: s.stock.enterpriseList,
+    isLoading: s.loading.global,
   }));
-
-  console.log(listDate);
 
   const dispatch = useDispatch();
 
   async function submit(values?: any) {
+    setCalcLoading(true);
     const v = values || await form.validateFields();
     try {
+      localStorage.setItem("weight", JSON.stringify(v));
+      const curInfo: any = await dispatch(
+        { type: "stock/listCurrent", payload: v?.curDate },
+      );
+      // 流程是 计算基本参数 然后 计算估值 然后权重排序
+      let tempenterprise = [...enterpriseList];
+      const dicounted = curInfo.map((info: CurrentInfo) => {
+        const [enterprise, remaining] = tempenterprise.reduce(
+          (acc: [Enterprise[], Enterprise[]], cur) => {
+            const [e, r] = acc;
+            return cur.code === info.code
+              ? [e.concat(cur), r]
+              : [e, r.concat(cur)];
+          },
+          [[], []],
+        );
+        // 剩下的还给temp，减少剩余循环次数
+        tempenterprise = remaining;
+        const merged: Stock = {
+          CurrentInfo: info,
+          Enterprise: enterprise,
+        };
+      });
     } catch (e) {
       console.error("create err: ", e);
+    } finally {
+      setCalcLoading(false);
+    }
+  }
+
+  function getInit() {
+    try {
+      const w = localStorage.getItem("weight");
+      if (w) {
+        return JSON.parse(w);
+      }
+    } catch (e) {
+      console.error(e);
+      localStorage.removeItem("weight");
     }
   }
 
@@ -83,9 +114,24 @@ export default () => {
           labelCol={{ span: 24 }}
           wrapperCol={{ span: 24 }}
           onFinish={submit}
+          initialValues={getInit()}
         >
           <Form.Item label="年报更新于">
-            {true ? "123" : <a>没有数据？重新加载！</a>}
+            {enterpriseList?.[0]?.CreateDate
+              ? moment(enterpriseList?.[0]?.CreateDate).format(
+                "YYYY-MM-DD hh:mm:ss",
+              )
+              : <a
+                onClick={async () => {
+                  try {
+                    await dispatch({ type: "stock/listEnterprise" });
+                  } catch (e) {
+                    console.error(e);
+                  }
+                }}
+              >
+                没有数据？重新加载！
+              </a>}
           </Form.Item>
           <Form.Item
             label="现值数据源"
@@ -220,7 +266,14 @@ export default () => {
           <Button style={{ display: "none" }} htmlType="submit"></Button>
         </Form>
       </Content>
-      <Button size="large" type="primary" onClick={() => submit()}>计算</Button>
+      <Button
+        loading={isLoading || calcLoading}
+        size="large"
+        type="primary"
+        onClick={() => submit()}
+      >
+        计算
+      </Button>
     </Wrap>
   );
 };

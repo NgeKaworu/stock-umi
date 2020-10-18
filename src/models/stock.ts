@@ -6,7 +6,7 @@ export interface InfoTime {
   _id: string;
 }
 
-export interface Annals {
+export interface Enterprise {
   "id": string;
   "CreateDate": string;
   "code": string;
@@ -91,10 +91,85 @@ export interface CurrentInfo {
   "classify": string;
 }
 
-const TagModal: ModalSchma = {
+// Stock 股票基本结构
+export interface StockStruct {
+  Enterprise?: Enterprise[]; //年报列表
+  CurrentInfo?: CurrentInfo; //当前信息
+  PB?: number; //市净率
+  PE?: number; //市盈率
+  PEG?: number; //市盈增长比
+  ROE?: number; //净资产收益率
+  DPE?: number; //动态利润估值
+  DPER?: number; //动态利润估值率
+  DCE?: number; //动态现金估值
+  DCER?: number; //动态现金估值率
+  AAGR?: number; //平均年增长率
+  Grade?: number; //评分
+  Calc(): StockStruct;
+  Discount(r: number): StockStruct;
+  CalcPB(): StockStruct;
+  CalcPE(): StockStruct;
+  CalcAAGR(): StockStruct;
+  CalcPEG(): StockStruct;
+  CalcROE(): StockStruct;
+  CalcDCE(r: number): StockStruct;
+  CalcDCER(): StockStruct;
+  CalcDPE(r: number): StockStruct;
+  CalcDPER(): StockStruct;
+}
+
+export class Stock implements StockStruct {
+  Enterprise?: Enterprise[] | undefined;
+  CurrentInfo?: CurrentInfo | undefined;
+  PB?: number | undefined;
+  PE?: number | undefined;
+  PEG?: number | undefined;
+  ROE?: number | undefined;
+  DPE?: number | undefined;
+  DPER?: number | undefined;
+  DCE?: number | undefined;
+  DCER?: number | undefined;
+  AAGR?: number | undefined;
+  Grade?: number | undefined;
+  Calc(): StockStruct {
+    throw new Error("Method not implemented.");
+  }
+  Discount(r: number): StockStruct {
+    throw new Error("Method not implemented.");
+  }
+  CalcPB(): StockStruct {
+    throw new Error("Method not implemented.");
+  }
+  CalcPE(): StockStruct {
+    throw new Error("Method not implemented.");
+  }
+  CalcAAGR(): StockStruct {
+    throw new Error("Method not implemented.");
+  }
+  CalcPEG(): StockStruct {
+    throw new Error("Method not implemented.");
+  }
+  CalcROE(): StockStruct {
+    throw new Error("Method not implemented.");
+  }
+  CalcDCE(r: number): StockStruct {
+    throw new Error("Method not implemented.");
+  }
+  CalcDCER(): StockStruct {
+    throw new Error("Method not implemented.");
+  }
+  CalcDPE(r: number): StockStruct {
+    throw new Error("Method not implemented.");
+  }
+  CalcDPER(): StockStruct {
+    throw new Error("Method not implemented.");
+  }
+}
+
+const StockModal: ModalSchma = {
   state: {
     listDate: [],
-    annalsList: [],
+    enterpriseList: [],
     currentList: [],
   },
   reducers: {
@@ -103,32 +178,35 @@ const TagModal: ModalSchma = {
     },
   },
   effects: {
-    *listAnnals(_, { put }) {
+    *listEnterprise(_, { put }) {
       try {
-        const a = sessionStorage.getItem("annals");
+        const a = sessionStorage.getItem("enterprise");
         if (a) {
-          const annals = JSON.parse(a);
-          return yield put({ type: "save", payload: { annalsList: annals } });
+          const enterprise = JSON.parse(a);
+          yield put({ type: "save", payload: { enterpriseList: enterprise } });
+          return enterprise;
         } else {
           const { data } = yield RESTful.get(
-            "/main/annals/list",
+            "/main/enterprise/list",
             { silence: "success" },
           );
-          sessionStorage.setItem("annals", JSON.stringify(data));
-          return yield put({ type: "save", payload: { annalsList: data } });
+          sessionStorage.setItem("enterprise", JSON.stringify(data));
+          yield put({ type: "save", payload: { enterpriseList: data } });
+          return data;
         }
       } catch (e) {
         console.error(e);
       }
     },
-    *fetchAnnals(_, { put }) {
+    *fetchEnterprise(_, { put }) {
       try {
         const { data } = yield RESTful.get(
-          "/main/annals/fetch",
+          "/main/enterprise/fetch",
           { silence: "success", timeout: 0 },
         );
-        sessionStorage.setItem("annals", JSON.stringify(data));
-        return yield put({ type: "save", payload: { annalsList: data } });
+        sessionStorage.setItem("enterprise", JSON.stringify(data));
+        yield put({ type: "save", payload: { enterpriseList: data } });
+        return data;
       } catch (e) {
         console.error(e);
       }
@@ -137,15 +215,17 @@ const TagModal: ModalSchma = {
       try {
         const a = sessionStorage.getItem(`currrent-${payload}`);
         if (a) {
-          const annals = JSON.parse(a);
-          return yield put({ type: "save", payload: { currentList: annals } });
+          const current = JSON.parse(a);
+          yield put({ type: "save", payload: { currentList: current } });
+          return current;
         } else {
           const { data } = yield RESTful.get(
             `/main/current-info/list/${payload}`,
             { silence: "success" },
           );
           sessionStorage.setItem(`currrent-${payload}`, JSON.stringify(data));
-          return yield put({ type: "save", payload: { currentList: data } });
+          yield put({ type: "save", payload: { currentList: data } });
+          return data;
         }
       } catch (e) {
         console.error(e);
@@ -159,7 +239,8 @@ const TagModal: ModalSchma = {
         );
         const date: InfoTime[] = yield put({ type: "listInfoTime" });
         sessionStorage.setItem(`currrent-${date[0]._id}`, JSON.stringify(data));
-        return yield put({ type: "save", payload: { annalsList: data } });
+        yield put({ type: "save", payload: { currentList: data } });
+        return data;
       } catch (e) {
         console.error(e);
       }
@@ -176,9 +257,9 @@ const TagModal: ModalSchma = {
   subscriptions: {
     setup({ dispatch }): void {
       dispatch({ type: "listInfoTime" });
-      dispatch({ type: "listAnnals" });
+      dispatch({ type: "listEnterprise" });
     },
   },
 };
 
-export default TagModal;
+export default StockModal;
