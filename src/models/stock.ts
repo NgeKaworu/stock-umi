@@ -9,47 +9,47 @@ export interface InfoTime {
 export interface Enterprise {
   "id": string;
   "CreateDate": string;
-  "code": string;
-  "ReportDate": string;
-  "Title": string;
-  "Epsjb": string;
-  "Epskcjb": string;
-  "Epsxs": string;
-  "Bps": string;
-  "Mgzbgj": string;
-  "Mgwfplr": string;
-  "Mgjyxjje": string;
-  "Totalincome": string;
-  "Grossprofit": string;
-  "Parentnetprofit": string;
-  "Bucklenetprofit": string;
-  "Totalincomeyoy": string;
-  "Parentnetprofityoy": string;
-  "Bucklenetprofityoy": string;
-  "Totalincomerelativeratio": string;
-  "Parentnetprofitrelativeratio": string;
-  "Bucklenetprofitrelativeratio": string;
-  "Roejq": string;
-  "Roekcjq": string;
-  "Allcapitalearningsrate": string;
-  "Grossmargin": string;
-  "Netinterest": string;
-  "Accountsrate": string;
-  "Salesrate": string;
-  "Operatingrate": string;
-  "Taxrate": string;
-  "Liquidityratio": string;
-  "Quickratio": string;
-  "Cashflowratio": string;
-  "Assetliabilityratio": string;
-  "Equitymultiplier": string;
-  "Equityratio": string;
-  "Totalassetsdays": string;
-  "Inventorydays": string;
-  "Accountsreceivabledays": string;
-  "Totalassetrate": string;
-  "Inventoryrate": string;
-  "Accountsreceiveablerate": string;
+  "code": string; //股票代号
+  "ReportDate": string; //报告日期
+  "Title": string; //报告名称
+  "Epsjb": string; //基本每股收益(元)
+  "Epskcjb": string; //扣非每股收益(元)
+  "Epsxs": string; //稀释每股收益(元)
+  "Bps": string; //每股净资产(元)
+  "Mgzbgj": string; //每股资本公积(元)
+  "Mgwfplr": string; //每股未分配利润(元)
+  "Mgjyxjje": string; //每股经营现金流(元)
+  "Totalincome": string; //营业总收入(元)
+  "Grossprofit": string; //毛利润(元)
+  "Parentnetprofit": string; //归属净利润(元)
+  "Bucklenetprofit": string; //扣非净利润(元)
+  "Totalincomeyoy": string; //营业总收入同比增长
+  "Parentnetprofityoy": string; //归属净利润同比增长
+  "Bucklenetprofityoy": string; //扣非净利润同比增长
+  "Totalincomerelativeratio": string; //营业总收入滚动环比增长
+  "Parentnetprofitrelativeratio": string; //归属净利润滚动环比增长
+  "Bucklenetprofitrelativeratio": string; //扣非净利润滚动环比增长
+  "Roejq": string; //净资产收益率(加权)
+  "Roekcjq": string; //净资产收益率(扣非/加权)
+  "Allcapitalearningsrate": string; //总资产收益率(加权)
+  "Grossmargin": string; //毛利率
+  "Netinterest": string; //净利率
+  "Accountsrate": string; //预收账款/营业收入
+  "Salesrate": string; //销售净现金流/营业收入
+  "Operatingrate": string; //经营净现金流/营业收入
+  "Taxrate": string; //实际税率
+  "Liquidityratio": string; //流动比率
+  "Quickratio": string; //速动比率
+  "Cashflowratio": string; //现金流量比率
+  "Assetliabilityratio": string; //资产负债率
+  "Equitymultiplier": string; //权益乘数
+  "Equityratio": string; //产权比率
+  "Totalassetsdays": string; //总资产周转天数(天)
+  "Inventorydays": string; //存货周转天数(天)
+  "Accountsreceivabledays": string; //应收账款周转天数(天)
+  "Totalassetrate": string; //总资产周转率(次)
+  "Inventoryrate": string; //存货周转率(次)
+  "Accountsreceiveablerate": string; //应收账款周转率(次)
 }
 
 export interface CurrentInfo {
@@ -131,38 +131,91 @@ export class Stock implements StockStruct {
   DCER?: number | undefined;
   AAGR?: number | undefined;
   Grade?: number | undefined;
+  // Calc 计算全部基本属性
   Calc(): StockStruct {
-    throw new Error("Method not implemented.");
+    return this.CalcPB()
+      .CalcPE()
+      .CalcAAGR()
+      .CalcPEG()
+      .CalcROE();
   }
+  // Discount 估值
   Discount(r: number): StockStruct {
-    throw new Error("Method not implemented.");
+    return this.CalcDCE(r)
+      .CalcDCER()
+      .CalcDPE(r)
+      .CalcDPER();
   }
+  // CalcPB 计算市净率
   CalcPB(): StockStruct {
-    throw new Error("Method not implemented.");
+    //市净率 = 股价 / 每股净资产
+    this.PB = Number(this.CurrentInfo?.currentPrice) /
+      Number(this.Enterprise?.[0].Bps);
+    return this;
   }
+  // CalcPE 计算市盈率
   CalcPE(): StockStruct {
-    throw new Error("Method not implemented.");
+    // 市盈率 = 股价 / 每股未分配利润
+    this.PE = Number(this.Enterprise?.[0]?.Mgwfplr) /
+      Number(this.CurrentInfo?.currentPrice);
+    return this;
   }
+  // CalcAAGR 计算平均年增长率
   CalcAAGR(): StockStruct {
-    throw new Error("Method not implemented.");
+    const len = Number(this.Enterprise?.length);
+    let sum: number = 0;
+
+    for (let k = 0; k < len; ++k) {
+      const n = k + 1;
+      if (n >= len) {
+        break;
+      }
+      const lastBps = Number(this?.Enterprise?.[n]?.Bps);
+      const Bps = Number(this?.Enterprise?.[k]?.Bps);
+
+      const curAAGR = (Bps - lastBps) / lastBps;
+
+      sum += curAAGR;
+    }
+    this.AAGR = sum / len;
+
+    return this;
   }
+  // CalcPEG 计算市盈增长比
   CalcPEG(): StockStruct {
-    throw new Error("Method not implemented.");
+    // 市盈增长比 = 市盈率 / 平均年增长率
+    this.PEG = Number(this?.PE) / Number(this?.AAGR);
+    return this;
   }
+  // CalcROE 计算净资产收益率
   CalcROE(): StockStruct {
-    throw new Error("Method not implemented.");
+    // 净资产收益率 = 每股净值 / 每股未分配利润
+    this.ROE = Number(this?.Enterprise?.[0]?.Mgwfplr) /
+      Number(this?.Enterprise?.[0]?.Bps);
+    return this;
   }
+  // CalcDCE 计算动态现金估值
   CalcDCE(r: number): StockStruct {
-    throw new Error("Method not implemented.");
+    // 动态现金估值 = 每股经营现金流 / (贴现率 - 平均年增长率)
+    this.DCE = Number(this?.Enterprise?.[0]?.Mgjyxjje) /
+      (r - Number(this.AAGR));
+    return this;
   }
+  // CalcDCER 估值现值比
   CalcDCER(): StockStruct {
-    throw new Error("Method not implemented.");
+    this.DCER = Number(this?.DCE) / Number(this?.CurrentInfo?.currentPrice);
+    return this;
   }
+  // CalcDPE 计算动态利润估值
   CalcDPE(r: number): StockStruct {
-    throw new Error("Method not implemented.");
+    // 动态利润估值 = 每股净资产 / (贴现率 - 平均年增长率)
+    this.DPE = Number(this?.Enterprise?.[0].Bps) / (r - Number(this?.AAGR));
+    return this;
   }
+  // CalcDPER 估值现值比
   CalcDPER(): StockStruct {
-    throw new Error("Method not implemented.");
+    this.DPER = Number(this?.DPE) / Number(this?.CurrentInfo?.currentPrice);
+    return this;
   }
 }
 
