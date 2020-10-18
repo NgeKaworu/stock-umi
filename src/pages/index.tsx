@@ -69,23 +69,37 @@ export default () => {
       );
       // 流程是 计算基本参数 然后 计算估值 然后权重排序
       let tempenterprise = [...enterpriseList];
-      const dicounted = curInfo.map((info: CurrentInfo) => {
-        const [enterprise, remaining] = tempenterprise.reduce(
-          (acc: [Enterprise[], Enterprise[]], cur) => {
-            const [e, r] = acc;
-            return cur.code === info.code
-              ? [e.concat(cur), r]
-              : [e, r.concat(cur)];
-          },
-          [[], []],
-        );
-        // 剩下的还给temp，减少剩余循环次数
-        tempenterprise = remaining;
-        const stock: Stock = {
-          CurrentInfo: info,
-          Enterprise: enterprise,
-        };
-      });
+      let dicounted: Stock[] = [];
+      await Promise.all(
+        curInfo.map((info: CurrentInfo) =>
+          new Promise((res) =>
+            // requestIdleCallback 使用这个方式不阻塞dom渲染
+            window.requestIdleCallback(() => {
+              const [enterprise, remaining] = tempenterprise.reduce(
+                (acc: [Enterprise[], Enterprise[]], cur) => {
+                  const [e, r] = acc;
+                  return cur.code === info.code
+                    ? [e.concat(cur), r]
+                    : [e, r.concat(cur)];
+                },
+                [[], []],
+              );
+              // 剩下的还给temp，减少剩余循环次数
+              tempenterprise = remaining;
+              const stock = new Stock();
+
+              stock.CurrentInfo = info;
+              stock.Enterprise = enterprise;
+
+              stock.Calc().Discount(v?.dr);
+              dicounted.push(stock);
+              res();
+            })
+          )
+        ),
+      );
+      console.log(dicounted);
+      const weights = [];
     } catch (e) {
       console.error("create err: ", e);
     } finally {

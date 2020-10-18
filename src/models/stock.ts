@@ -150,7 +150,7 @@ export class Stock implements StockStruct {
   CalcPB(): StockStruct {
     //市净率 = 股价 / 每股净资产
     this.PB = Number(this.CurrentInfo?.currentPrice) /
-      Number(this.Enterprise?.[0].Bps);
+      Number(this.Enterprise?.[0]?.Bps);
     return this;
   }
   // CalcPE 计算市盈率
@@ -209,7 +209,7 @@ export class Stock implements StockStruct {
   // CalcDPE 计算动态利润估值
   CalcDPE(r: number): StockStruct {
     // 动态利润估值 = 每股净资产 / (贴现率 - 平均年增长率)
-    this.DPE = Number(this?.Enterprise?.[0].Bps) / (r - Number(this?.AAGR));
+    this.DPE = Number(this?.Enterprise?.[0]?.Bps) / (r - Number(this?.AAGR));
     return this;
   }
   // CalcDPER 估值现值比
