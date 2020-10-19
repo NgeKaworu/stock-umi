@@ -113,12 +113,9 @@ export default () => {
       for (let i = 0; i < keys.length; ++i) {
         const k = weights[keys[i]];
         if (!k) continue;
-        const isAsc = k > 0;
-        discounted.sort((a: any, b: any) => {
-          const s = b[k] - a[k];
-          return isAsc ? s : -s;
-        });
-        const weight = Math.abs(k) / sum;
+
+        discounted.sort((a: any, b: any) => b[k] - a[k]);
+        const weight = k / sum;
         let j = discounted.length;
         while (j--) {
           discounted[j].Grade = SafeNumber(discounted?.[j]?.Grade) +
@@ -218,9 +215,9 @@ export default () => {
           </Form.Item>
           <div>
             权重遵守以下规则：
-            <br />- 整数
-            <br />- 如果希望该权重越小越好，请用负值
-            <br />- 空代表跳过跳过
+            <br />- 权重表示：该参数占整体的比例；
+            <br />- 如果希望该权重以降序排序，请用负值；
+            <br />- 空代表跳过跳过；
           </div>
           <div
             style={{
