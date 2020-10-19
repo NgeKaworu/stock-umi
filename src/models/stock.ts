@@ -1,6 +1,7 @@
 import { ModalSchma } from "@/models/global";
 
 import { RESTful } from "@/http";
+import { SafeNumber } from "@/utils/Number";
 
 export interface InfoTime {
   _id: string;
@@ -149,20 +150,20 @@ export class Stock implements StockStruct {
   // CalcPB 计算市净率
   CalcPB(): StockStruct {
     //市净率 = 股价 / 每股净资产
-    this.PB = Number(this.CurrentInfo?.currentPrice) /
-      Number(this.Enterprise?.[0]?.Bps);
+    this.PB = SafeNumber(this.CurrentInfo?.currentPrice) /
+      SafeNumber(this.Enterprise?.[0]?.Bps);
     return this;
   }
   // CalcPE 计算市盈率
   CalcPE(): StockStruct {
     // 市盈率 = 股价 / 每股未分配利润
-    this.PE = Number(this.Enterprise?.[0]?.Mgwfplr) /
-      Number(this.CurrentInfo?.currentPrice);
+    this.PE = SafeNumber(this.Enterprise?.[0]?.Mgwfplr) /
+      SafeNumber(this.CurrentInfo?.currentPrice);
     return this;
   }
   // CalcAAGR 计算平均年增长率
   CalcAAGR(): StockStruct {
-    const len = Number(this.Enterprise?.length);
+    const len = SafeNumber(this.Enterprise?.length);
     let sum: number = 0;
 
     for (let k = 0; k < len; ++k) {
@@ -170,8 +171,8 @@ export class Stock implements StockStruct {
       if (n >= len) {
         break;
       }
-      const lastBps = Number(this?.Enterprise?.[n]?.Bps);
-      const Bps = Number(this?.Enterprise?.[k]?.Bps);
+      const lastBps = SafeNumber(this?.Enterprise?.[n]?.Bps);
+      const Bps = SafeNumber(this?.Enterprise?.[k]?.Bps);
 
       const curAAGR = (Bps - lastBps) / lastBps;
 
@@ -184,37 +185,40 @@ export class Stock implements StockStruct {
   // CalcPEG 计算市盈增长比
   CalcPEG(): StockStruct {
     // 市盈增长比 = 市盈率 / 平均年增长率
-    this.PEG = Number(this?.PE) / Number(this?.AAGR);
+    this.PEG = SafeNumber(this?.PE) / SafeNumber(this?.AAGR);
     return this;
   }
   // CalcROE 计算净资产收益率
   CalcROE(): StockStruct {
     // 净资产收益率 = 每股净值 / 每股未分配利润
-    this.ROE = Number(this?.Enterprise?.[0]?.Mgwfplr) /
-      Number(this?.Enterprise?.[0]?.Bps);
+    this.ROE = SafeNumber(this?.Enterprise?.[0]?.Mgwfplr) /
+      SafeNumber(this?.Enterprise?.[0]?.Bps);
     return this;
   }
   // CalcDCE 计算动态现金估值
   CalcDCE(r: number): StockStruct {
     // 动态现金估值 = 每股经营现金流 / (贴现率 - 平均年增长率)
-    this.DCE = Number(this?.Enterprise?.[0]?.Mgjyxjje) /
-      (r - Number(this.AAGR));
+    this.DCE = SafeNumber(this?.Enterprise?.[0]?.Mgjyxjje) /
+      (r - SafeNumber(this.AAGR));
     return this;
   }
   // CalcDCER 估值现值比
   CalcDCER(): StockStruct {
-    this.DCER = Number(this?.DCE) / Number(this?.CurrentInfo?.currentPrice);
+    this.DCER = SafeNumber(this?.DCE) /
+      SafeNumber(this?.CurrentInfo?.currentPrice);
     return this;
   }
   // CalcDPE 计算动态利润估值
   CalcDPE(r: number): StockStruct {
     // 动态利润估值 = 每股净资产 / (贴现率 - 平均年增长率)
-    this.DPE = Number(this?.Enterprise?.[0]?.Bps) / (r - Number(this?.AAGR));
+    this.DPE = SafeNumber(this?.Enterprise?.[0]?.Bps) /
+      (r - SafeNumber(this?.AAGR));
     return this;
   }
   // CalcDPER 估值现值比
   CalcDPER(): StockStruct {
-    this.DPER = Number(this?.DPE) / Number(this?.CurrentInfo?.currentPrice);
+    this.DPER = SafeNumber(this?.DPE) /
+      SafeNumber(this?.CurrentInfo?.currentPrice);
     return this;
   }
 }

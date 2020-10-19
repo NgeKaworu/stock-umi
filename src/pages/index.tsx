@@ -11,6 +11,7 @@ import theme from "@/theme";
 import moment from "moment";
 
 import { CurrentInfo, Enterprise, InfoTime, Stock } from "@/models/stock";
+import { SafeNumber } from "@/utils/Number";
 
 interface rootState {
   stock: {
@@ -64,12 +65,14 @@ export default () => {
     const v = values || await form.validateFields();
     try {
       localStorage.setItem("weight", JSON.stringify(v));
+      const { curDate, dr, ...weights } = v;
       const curInfo: any = await dispatch(
-        { type: "stock/listCurrent", payload: v?.curDate },
+        { type: "stock/listCurrent", payload: curDate },
       );
+
       // 流程是 计算基本参数 然后 计算估值 然后权重排序
       let tempenterprise = [...enterpriseList];
-      let dicounted: Stock[] = [];
+      const discounted: Stock[] = [];
       await Promise.all(
         curInfo.map((info: CurrentInfo) =>
           new Promise((res) =>
@@ -91,15 +94,40 @@ export default () => {
               stock.CurrentInfo = info;
               stock.Enterprise = enterprise;
 
-              stock.Calc().Discount(v?.dr);
-              dicounted.push(stock);
+              stock.Calc().Discount(dr);
+              discounted.push(stock);
               res();
             })
           )
         ),
       );
-      console.log(dicounted);
-      const weights = [];
+      console.log(weights);
+
+      const keys = Object.keys(weights);
+      const sum: number = Object.values(weights).reduce(
+        (acc: number, cur: any) =>
+          Boolean(cur) ? acc + Math.abs((cur as number)) : acc,
+        0,
+      );
+
+      for (let i = 0; i < keys.length; ++i) {
+        const k = weights[keys[i]];
+        if (!k) continue;
+        const isAsc = k > 0;
+        discounted.sort((a: any, b: any) => {
+          const s = b[k] - a[k];
+          return isAsc ? s : -s;
+        });
+        const weight = Math.abs(k) / sum;
+        let j = discounted.length;
+        while (j--) {
+          discounted[j].Grade = SafeNumber(discounted?.[j]?.Grade) +
+            ((j + 1) * weight);
+        }
+      }
+
+      discounted.sort((a, b) => SafeNumber(b.Grade) - SafeNumber(a.Grade));
+      console.log(discounted);
     } catch (e) {
       console.error("create err: ", e);
     } finally {
