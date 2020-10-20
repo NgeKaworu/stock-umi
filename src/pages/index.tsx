@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 import styled from "styled-components";
 
@@ -7,7 +8,6 @@ import { Button, Form, InputNumber, Select } from "antd";
 
 import { HomeOutlined, InfoCircleOutlined } from "@ant-design/icons";
 
-import theme from "@/theme";
 import moment from "moment";
 
 import { CurrentInfo, Enterprise, InfoTime, Stock } from "@/models/stock";
@@ -59,6 +59,7 @@ export default () => {
   }));
 
   const dispatch = useDispatch();
+  const history = useHistory();
 
   async function submit(values?: any) {
     setCalcLoading(true);
@@ -101,7 +102,6 @@ export default () => {
           )
         ),
       );
-      console.log(weights);
 
       const keys = Object.keys(weights);
       const sum: number = Object.values(weights).reduce(
@@ -124,7 +124,8 @@ export default () => {
       }
 
       discounted.sort((a, b) => SafeNumber(b.Grade) - SafeNumber(a.Grade));
-      console.log(discounted);
+
+      history.push({ pathname: "/result/", state: discounted });
     } catch (e) {
       console.error("create err: ", e);
     } finally {
@@ -271,9 +272,9 @@ export default () => {
 
             <Form.Item
               name="DCER"
-              label="动态现金估值比"
+              label="现金估值比(动)"
               tooltip={{
-                title: "动态现金估值比 = 动态现金估值 / 现值",
+                title: "现金估值比(动) = 现金估值(动) / 现值",
                 icon: <InfoCircleOutlined />,
               }}
             >
@@ -282,9 +283,9 @@ export default () => {
 
             <Form.Item
               name="DPER"
-              label="动态利润估值比"
+              label="利润估值比(动)"
               tooltip={{
-                title: "动态利润估值比 = 动态利润估值 / 现值",
+                title: "利润估值比(动) = 利润估值(动) / 现值",
                 icon: <InfoCircleOutlined />,
               }}
             >

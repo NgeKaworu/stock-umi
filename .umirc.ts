@@ -10,7 +10,7 @@ export default defineConfig({
       path: "/",
       routes: [
         { path: "/", component: "index" },
-        // { path: "/statistic/", component: "statistic" },
+        { path: "/result/", component: "result" },
         { redirect: "/" },
       ],
     },
