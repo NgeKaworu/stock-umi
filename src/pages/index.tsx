@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 
@@ -16,12 +16,15 @@ import moment from "moment";
 
 import { CurrentInfo, Enterprise, InfoTime, Stock } from "@/models/stock";
 import { SafeNumber } from "@/utils/Number";
+import { UserSchema } from "@/models/user";
 
+import UserExec from "@/components/UserExec";
 interface rootState {
   stock: {
     listDate: InfoTime[];
     enterpriseList: Enterprise[];
   };
+  user: UserSchema;
   loading: {
     global: boolean;
   };
@@ -69,16 +72,63 @@ export default () => {
   const [calcLoading, setCalcLoading] = useState(false);
   const [form] = Form.useForm();
 
-  const { listDate, enterpriseList, isLoading } = useSelector((
+  const { listDate, enterpriseList, isLoading, user } = useSelector((
     s: rootState,
   ) => ({
     listDate: s.stock.listDate,
     enterpriseList: s.stock.enterpriseList,
     isLoading: s.loading.global,
+    user: s.user,
   }));
 
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const userExec = UserExec({
+    modalProps: { title: "管理员登录" },
+    onOk: async (formValues?: any) => {
+      try {
+        userExec?.Update({
+          modalProps: {
+            confirmLoading: true,
+          },
+        }).Execute();
+
+        await dispatch({
+          type: "user/login",
+          payload: formValues,
+        });
+        await dispatch({ type: "user/profile" });
+
+        userExec?.Update({
+          modalProps: {
+            visible: false,
+          },
+        }).Execute();
+      } catch (e) {
+        console.error(e);
+      } finally {
+        userExec?.Update({
+          modalProps: {
+            confirmLoading: false,
+          },
+        }).Execute();
+      }
+    },
+    onCancel: () => {
+      userExec.Update({
+        modalProps: {
+          visible: false,
+        },
+      }).Execute();
+    },
+  });
+
+  useLayoutEffect(() => {
+    return () => {
+      userExec.Destroy();
+    };
+  }, [userExec]);
 
   async function submit(values?: any) {
     setCalcLoading(true);
@@ -240,7 +290,7 @@ export default () => {
             <br />- 空代表跳过跳过；
           </div>
           <Row>
-            <Col xs={8} sm={6} md={4} lg={2} xl={1}>
+            <Col xs={12} sm={8} md={6} lg={4} xl={2} xxl={1}>
               <Form.Item
                 name="PB"
                 label="市净率（PB）"
@@ -252,7 +302,7 @@ export default () => {
                 <InputNumber step={1}></InputNumber>
               </Form.Item>
             </Col>
-            <Col xs={8} sm={6} md={4} lg={2} xl={1}>
+            <Col xs={12} sm={8} md={6} lg={4} xl={2} xxl={1}>
               <Form.Item
                 name="PE"
                 label="市盈率（PE）"
@@ -264,7 +314,7 @@ export default () => {
                 <InputNumber step={1}></InputNumber>
               </Form.Item>
             </Col>
-            <Col xs={8} sm={6} md={4} lg={2} xl={1}>
+            <Col xs={12} sm={8} md={6} lg={4} xl={2} xxl={1}>
               <Form.Item
                 name="AAGR"
                 label="平均年增长率"
@@ -276,7 +326,7 @@ export default () => {
                 <InputNumber step={1}></InputNumber>
               </Form.Item>
             </Col>
-            <Col xs={8} sm={6} md={4} lg={2} xl={1}>
+            <Col xs={12} sm={8} md={6} lg={4} xl={2} xxl={1}>
               <Form.Item
                 name="PEG"
                 label="市盈增长比（PEG）"
@@ -288,7 +338,7 @@ export default () => {
                 <InputNumber step={1}></InputNumber>
               </Form.Item>
             </Col>
-            <Col xs={8} sm={6} md={4} lg={2} xl={1}>
+            <Col xs={12} sm={8} md={6} lg={4} xl={2} xxl={1}>
               <Form.Item
                 name="DCER"
                 label="现金估值比(动)"
@@ -300,7 +350,7 @@ export default () => {
                 <InputNumber step={1}></InputNumber>
               </Form.Item>
             </Col>
-            <Col xs={8} sm={6} md={4} lg={2} xl={1}>
+            <Col xs={12} sm={8} md={6} lg={4} xl={2} xxl={1}>
               <Form.Item
                 name="DPER"
                 label="利润估值比(动)"
@@ -312,7 +362,7 @@ export default () => {
                 <InputNumber step={1}></InputNumber>
               </Form.Item>
             </Col>
-            <Col xs={8} sm={6} md={4} lg={2} xl={1}>
+            <Col xs={12} sm={8} md={6} lg={4} xl={2} xxl={1}>
               <Form.Item
                 name="ROE"
                 label="净资产收益率（ROE）"
@@ -334,30 +384,56 @@ export default () => {
         type="primary"
         onClick={() => submit()}
       >
-        计算
+        {isLoading || calcLoading ? "数据计算量大，请耐心等待" : "计算"}
       </Button>
       <FixedPanel>
-        <Button
-          shape="circle"
-          type="primary"
-          icon={<UserOutlined />}
-          onClick={() => {}}
-        >
-        </Button>
-        <Button
-          shape="circle"
-          type="primary"
-          onClick={() => {}}
-        >
-          现
-        </Button>
-        <Button
-          shape="circle"
-          type="primary"
-          onClick={() => {}}
-        >
-          年
-        </Button>
+        {!user?.id
+          ? <Button
+            shape="circle"
+            type="primary"
+            icon={<UserOutlined />}
+            onClick={() => {
+              userExec.Update({
+                modalProps: {
+                  visible: true,
+                },
+              }).Execute();
+            }}
+            loading={isLoading}
+          >
+          </Button>
+          : <>
+            <Button
+              shape="circle"
+              type="primary"
+              onClick={() => {
+                dispatch({ type: "user/logout" });
+              }}
+              loading={isLoading}
+            >
+              {isLoading || "退"}
+            </Button>
+            <Button
+              shape="circle"
+              type="primary"
+              onClick={() => {
+                dispatch({ type: "stock/fetchEnterprise" });
+              }}
+              loading={isLoading}
+            >
+              {isLoading || "年"}
+            </Button>
+            <Button
+              shape="circle"
+              type="primary"
+              onClick={() => {
+                dispatch({ type: "stock/fetchCurrent" });
+              }}
+              loading={isLoading}
+            >
+              {isLoading || "现"}
+            </Button>
+          </>}
       </FixedPanel>
     </Wrap>
   );

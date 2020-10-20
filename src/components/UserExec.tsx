@@ -1,10 +1,11 @@
 import React, { cloneElement, useEffect } from "react";
 import type { Attributes, ReactNode } from "react";
 
-import { Form, Modal, Button, Input } from "antd";
+import { Button, Form, Input, Modal } from "antd";
 
 import Executer from "@/js-sdk/web/react/components/Executer";
-import { SketchPicker } from "react-color";
+
+import { LockOutlined, MailOutlined } from "@ant-design/icons";
 
 export interface TagProp {
   onOk?: (
@@ -19,7 +20,7 @@ export interface TagProp {
   initVal?: Record<string, any>;
 }
 
-function TagModForm(props: TagProp) {
+function UserModForm(props: TagProp) {
   const {
     onOk = () => {},
     onCancel = () => {},
@@ -48,43 +49,30 @@ function TagModForm(props: TagProp) {
       {...formProps}
     >
       <Form.Item
-        name="name"
+        name="email"
         rules={[
-          { required: true, message: "标签名不能为空" },
+          { required: true, message: "请输入邮箱地址" },
+          { type: "email", message: "请输入正确的邮箱地址" },
         ]}
-        label="标签名"
       >
         <Input
-          placeholder="标签名"
+          prefix={<MailOutlined />}
+          placeholder="E-Mail"
           allowClear
-          autoComplete="off"
         />
       </Form.Item>
       <Form.Item
-        valuePropName="color"
-        name="color"
+        name="pwd"
         rules={[
-          { required: true, message: "请选个颜色" },
+          { required: true, message: "密码不能为空" },
+          { min: 8, message: "密码最短应为8位" },
         ]}
-        label="颜色"
       >
-        <SketchPicker
-          width="unset"
-          disableAlpha
-          presetColors={[
-            "#f5222d",
-            "#fa541c",
-            "#fa8c16",
-            "#faad14",
-            "#fadb14",
-            "#a0d911",
-            "#52c41a",
-            "#13c2c2",
-            "#1890ff",
-            "#2f54eb",
-            "#722ed1",
-            "#eb2f96",
-          ]}
+        <Input
+          prefix={<LockOutlined />}
+          type="password"
+          placeholder="Password"
+          allowClear
         />
       </Form.Item>
 
@@ -96,7 +84,7 @@ function TagModForm(props: TagProp) {
 }
 
 // 重载Updata 手动深复制
-class TagExec extends Executer {
+class UserExec extends Executer {
   Update<P>(
     props?: Partial<P> & Attributes & TagProp,
     ...children: ReactNode[]
@@ -127,7 +115,7 @@ class TagExec extends Executer {
 }
 
 export default (options?: TagProp) => {
-  return new TagExec(
-    <TagModForm {...options} />,
+  return new UserExec(
+    <UserModForm {...options} />,
   );
 };

@@ -6,11 +6,15 @@ export interface UserSchema {
   name?: string;
   email?: string;
   createAt?: Date;
-  pwd?: string;
 }
 
 const UserModal: ModalSchma = {
-  state: {},
+  state: {
+    id: undefined,
+    name: undefined,
+    email: undefined,
+    createAt: undefined,
+  },
   reducers: {
     save(state, { payload }) {
       return { ...state, ...payload };
@@ -21,11 +25,23 @@ const UserModal: ModalSchma = {
       const { data } = yield RESTful.post("/main/login", { data: payload });
       localStorage.setItem("token", data);
     },
-    *logout() {
+    *profile(_, { put }) {
+      const { data } = yield RESTful.get(
+        "/main/profile",
+        { silence: "success" },
+      );
+      yield put({ type: "save", payload: data });
+    },
+    *logout(_, { put }) {
       localStorage.clear();
+      yield put({ type: "save", payload: { id: undefined } });
     },
   },
-  subscriptions: {},
+  subscriptions: {
+    setup({ dispatch }): void {
+      dispatch({ type: "profile" });
+    },
+  },
 };
 
 export default UserModal;

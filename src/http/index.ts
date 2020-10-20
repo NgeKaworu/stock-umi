@@ -97,11 +97,11 @@ function request(url: string, options: BizOptions = {}) {
 
     if (response?.status === 401) {
       return reAuth ? reAuthorization() : message.warning({
-        content: "请先登录",
-        onClose: () => {
-          localStorage.clear();
-          location.replace(`${window.routerBase}/user/`);
-        },
+        content: "你好，访客",
+        // onClose: () => {
+        //   localStorage.clear();
+        //   location.replace(`${window.routerBase}/user/`);
+        // },
       });
     }
     // silence标记为true 则不显示消息

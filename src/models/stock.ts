@@ -247,7 +247,7 @@ const StockModal: ModalSchma = {
             "/main/enterprise/list",
             { silence: "success" },
           );
-          sessionStorage.setItem("enterprise", JSON.stringify(data));
+          data && sessionStorage.setItem("enterprise", JSON.stringify(data));
           yield put({ type: "save", payload: { enterpriseList: data } });
           return data;
         }
@@ -261,7 +261,7 @@ const StockModal: ModalSchma = {
           "/main/enterprise/fetch",
           { silence: "success", timeout: 0 },
         );
-        sessionStorage.setItem("enterprise", JSON.stringify(data));
+        data && sessionStorage.setItem("enterprise", JSON.stringify(data));
         yield put({ type: "save", payload: { enterpriseList: data } });
         return data;
       } catch (e) {
@@ -280,7 +280,8 @@ const StockModal: ModalSchma = {
             `/main/current-info/list/${payload}`,
             { silence: "success" },
           );
-          sessionStorage.setItem(`currrent-${payload}`, JSON.stringify(data));
+          data &&
+            sessionStorage.setItem(`currrent-${payload}`, JSON.stringify(data));
           yield put({ type: "save", payload: { currentList: data } });
           return data;
         }
@@ -295,7 +296,11 @@ const StockModal: ModalSchma = {
           { silence: "success", timeout: 0 },
         );
         const date: InfoTime[] = yield put({ type: "listInfoTime" });
-        sessionStorage.setItem(`currrent-${date[0]._id}`, JSON.stringify(data));
+        data &&
+          sessionStorage.setItem(
+            `currrent-${date[0]._id}`,
+            JSON.stringify(data),
+          );
         yield put({ type: "save", payload: { currentList: data } });
         return data;
       } catch (e) {
