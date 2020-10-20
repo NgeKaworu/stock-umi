@@ -6,7 +6,11 @@ import styled from "styled-components";
 
 import { Button, Col, Form, InputNumber, Row, Select } from "antd";
 
-import { HomeOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import {
+  HomeOutlined,
+  InfoCircleOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 
 import moment from "moment";
 
@@ -44,6 +48,21 @@ const Content = styled.div`
   flex: 1;
   overflow-y: scroll;
   margin: 0 16px;
+`;
+
+const FixedPanel = styled.div`
+  position: fixed;
+  bottom: 8vh;
+  right: 8vw;
+  display: flex;
+  flex-direction: column;
+  > * {
+    margin-bottom: 8px;
+  };
+
+  > *:last-child {
+    margin-bottom: 0
+  };
 `;
 
 export default () => {
@@ -317,6 +336,29 @@ export default () => {
       >
         计算
       </Button>
+      <FixedPanel>
+        <Button
+          shape="circle"
+          type="primary"
+          icon={<UserOutlined />}
+          onClick={() => {}}
+        >
+        </Button>
+        <Button
+          shape="circle"
+          type="primary"
+          onClick={() => {}}
+        >
+          现
+        </Button>
+        <Button
+          shape="circle"
+          type="primary"
+          onClick={() => {}}
+        >
+          年
+        </Button>
+      </FixedPanel>
     </Wrap>
   );
 };
