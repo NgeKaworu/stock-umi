@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 
 import styled from "styled-components";
 
-import { Button, Form, InputNumber, Select } from "antd";
+import { Button, Col, Form, InputNumber, Row, Select } from "antd";
 
 import { HomeOutlined, InfoCircleOutlined } from "@ant-design/icons";
 
@@ -220,89 +220,92 @@ export default () => {
             <br />- 如果希望该权重以降序排序，请用负值；
             <br />- 空代表跳过跳过；
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-            }}
-          >
-            <Form.Item
-              name="PB"
-              label="市净率（PB）"
-              tooltip={{
-                title: "市净率（PB） = 市值 / 净资产 （反映市场预期）",
-                icon: <InfoCircleOutlined />,
-              }}
-            >
-              <InputNumber step={1}></InputNumber>
-            </Form.Item>
-
-            <Form.Item
-              name="PE"
-              label="市盈率（PE）"
-              tooltip={{
-                title: "市盈率PE = 市值 / 净利润 （反映回本时间）",
-                icon: <InfoCircleOutlined />,
-              }}
-            >
-              <InputNumber step={1}></InputNumber>
-            </Form.Item>
-
-            <Form.Item
-              name="AAGR"
-              label="平均年增长率"
-              tooltip={{
-                title: "去年增长率的平均",
-                icon: <InfoCircleOutlined />,
-              }}
-            >
-              <InputNumber step={1}></InputNumber>
-            </Form.Item>
-
-            <Form.Item
-              name="PEG"
-              label="市盈增长比（PEG）"
-              tooltip={{
-                title: "市盈增长比PEG = PE / 平均年增长率",
-                icon: <InfoCircleOutlined />,
-              }}
-            >
-              <InputNumber step={1}></InputNumber>
-            </Form.Item>
-
-            <Form.Item
-              name="DCER"
-              label="现金估值比(动)"
-              tooltip={{
-                title: "现金估值比(动) = 现金估值(动) / 现值",
-                icon: <InfoCircleOutlined />,
-              }}
-            >
-              <InputNumber step={1}></InputNumber>
-            </Form.Item>
-
-            <Form.Item
-              name="DPER"
-              label="利润估值比(动)"
-              tooltip={{
-                title: "利润估值比(动) = 利润估值(动) / 现值",
-                icon: <InfoCircleOutlined />,
-              }}
-            >
-              <InputNumber step={1}></InputNumber>
-            </Form.Item>
-
-            <Form.Item
-              name="ROE"
-              label="净资产收益率（ROE）"
-              tooltip={{
-                title: "净资产收益率ROE = 净利润 / 净资产 (盈利能力)",
-                icon: <InfoCircleOutlined />,
-              }}
-            >
-              <InputNumber step={1}></InputNumber>
-            </Form.Item>
-          </div>
+          <Row>
+            <Col xs={8} sm={6} md={4} lg={2} xl={1}>
+              <Form.Item
+                name="PB"
+                label="市净率（PB）"
+                tooltip={{
+                  title: "市净率（PB） = 市值 / 净资产 （反映市场预期）",
+                  icon: <InfoCircleOutlined />,
+                }}
+              >
+                <InputNumber step={1}></InputNumber>
+              </Form.Item>
+            </Col>
+            <Col xs={8} sm={6} md={4} lg={2} xl={1}>
+              <Form.Item
+                name="PE"
+                label="市盈率（PE）"
+                tooltip={{
+                  title: "市盈率PE = 市值 / 净利润 （反映回本时间）",
+                  icon: <InfoCircleOutlined />,
+                }}
+              >
+                <InputNumber step={1}></InputNumber>
+              </Form.Item>
+            </Col>
+            <Col xs={8} sm={6} md={4} lg={2} xl={1}>
+              <Form.Item
+                name="AAGR"
+                label="平均年增长率"
+                tooltip={{
+                  title: "去年增长率的平均",
+                  icon: <InfoCircleOutlined />,
+                }}
+              >
+                <InputNumber step={1}></InputNumber>
+              </Form.Item>
+            </Col>
+            <Col xs={8} sm={6} md={4} lg={2} xl={1}>
+              <Form.Item
+                name="PEG"
+                label="市盈增长比（PEG）"
+                tooltip={{
+                  title: "市盈增长比PEG = PE / 平均年增长率",
+                  icon: <InfoCircleOutlined />,
+                }}
+              >
+                <InputNumber step={1}></InputNumber>
+              </Form.Item>
+            </Col>
+            <Col xs={8} sm={6} md={4} lg={2} xl={1}>
+              <Form.Item
+                name="DCER"
+                label="现金估值比(动)"
+                tooltip={{
+                  title: "现金估值比(动) = 现金估值(动) / 现值",
+                  icon: <InfoCircleOutlined />,
+                }}
+              >
+                <InputNumber step={1}></InputNumber>
+              </Form.Item>
+            </Col>
+            <Col xs={8} sm={6} md={4} lg={2} xl={1}>
+              <Form.Item
+                name="DPER"
+                label="利润估值比(动)"
+                tooltip={{
+                  title: "利润估值比(动) = 利润估值(动) / 现值",
+                  icon: <InfoCircleOutlined />,
+                }}
+              >
+                <InputNumber step={1}></InputNumber>
+              </Form.Item>
+            </Col>
+            <Col xs={8} sm={6} md={4} lg={2} xl={1}>
+              <Form.Item
+                name="ROE"
+                label="净资产收益率（ROE）"
+                tooltip={{
+                  title: "净资产收益率ROE = 净利润 / 净资产 (盈利能力)",
+                  icon: <InfoCircleOutlined />,
+                }}
+              >
+                <InputNumber step={1}></InputNumber>
+              </Form.Item>
+            </Col>
+          </Row>
           <Button style={{ display: "none" }} htmlType="submit"></Button>
         </Form>
       </Content>
