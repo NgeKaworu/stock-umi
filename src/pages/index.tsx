@@ -384,7 +384,7 @@ export default () => {
         type="primary"
         onClick={() => submit()}
       >
-        {isLoading || calcLoading ? "数据计算量大，请耐心等待" : "计算"}
+        {isLoading || calcLoading ? "加载数据量大，请耐心等待" : "计算"}
       </Button>
       <FixedPanel>
         {!user?.id
