@@ -147,7 +147,7 @@ function request(url: string, options: BizOptions = {}) {
   return axios(proxyUrl, {
     timeout: 60 * 2 * 1000, // 超时改为两分钟
     headers: {
-      Authorization: `${localStorage.getItem("token")}`,
+      Authorization: `${localStorage.getItem("stock-token")}`,
       ...headers,
     },
     ...restOptions, // axios request options

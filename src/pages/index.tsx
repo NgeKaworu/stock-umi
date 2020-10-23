@@ -182,8 +182,9 @@ export default () => {
       for (let i = 0; i < keys.length; ++i) {
         const k = weights[keys[i]];
         if (!k) continue;
-
-        discounted.sort((a: any, b: any) => b[k] - a[k]);
+        discounted.sort((a: any, b: any) =>
+          SafeNumber(b[keys[i]]) - SafeNumber(a[keys[i]])
+        );
         const weight = k / sum;
         let j = discounted.length;
         while (j--) {

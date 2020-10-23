@@ -23,7 +23,7 @@ const UserModal: ModalSchma = {
   effects: {
     *login({ payload }) {
       const { data } = yield RESTful.post("/main/login", { data: payload });
-      localStorage.setItem("token", data);
+      localStorage.setItem("stock-token", data);
     },
     *profile(_, { put }) {
       const { data } = yield RESTful.get(
