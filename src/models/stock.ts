@@ -259,7 +259,7 @@ const StockModal: ModalSchma = {
       try {
         const { data } = yield RESTful.get(
           "/main/enterprise/fetch",
-          { silence: "success", timeout: 0 },
+          { silence: "success" },
         );
         data && sessionStorage.setItem("enterprise", JSON.stringify(data));
         yield put({ type: "save", payload: { enterpriseList: data } });
@@ -293,7 +293,7 @@ const StockModal: ModalSchma = {
       try {
         const { data } = yield RESTful.get(
           "/main/current-info/fetch",
-          { silence: "success", timeout: 0 },
+          { silence: "success" },
         );
         const date: InfoTime[] = yield put({ type: "listInfoTime" });
         data &&
