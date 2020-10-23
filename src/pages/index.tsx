@@ -291,7 +291,7 @@ export default () => {
             <br />- 空代表跳过跳过；
           </div>
           <Row>
-            <Col xs={12} sm={8} md={6} lg={4} xl={2} xxl={1}>
+            <Col xs={12} sm={8} md={6} lg={4} xl={2}>
               <Form.Item
                 name="PB"
                 label="市净率（PB）"
@@ -303,7 +303,7 @@ export default () => {
                 <InputNumber step={1}></InputNumber>
               </Form.Item>
             </Col>
-            <Col xs={12} sm={8} md={6} lg={4} xl={2} xxl={1}>
+            <Col xs={12} sm={8} md={6} lg={4} xl={2}>
               <Form.Item
                 name="PE"
                 label="市盈率（PE）"
@@ -315,7 +315,7 @@ export default () => {
                 <InputNumber step={1}></InputNumber>
               </Form.Item>
             </Col>
-            <Col xs={12} sm={8} md={6} lg={4} xl={2} xxl={1}>
+            <Col xs={12} sm={8} md={6} lg={4} xl={2}>
               <Form.Item
                 name="AAGR"
                 label="平均年增长率"
@@ -327,7 +327,7 @@ export default () => {
                 <InputNumber step={1}></InputNumber>
               </Form.Item>
             </Col>
-            <Col xs={12} sm={8} md={6} lg={4} xl={2} xxl={1}>
+            <Col xs={12} sm={8} md={6} lg={4} xl={2}>
               <Form.Item
                 name="PEG"
                 label="市盈增长比（PEG）"
@@ -339,7 +339,7 @@ export default () => {
                 <InputNumber step={1}></InputNumber>
               </Form.Item>
             </Col>
-            <Col xs={12} sm={8} md={6} lg={4} xl={2} xxl={1}>
+            <Col xs={12} sm={8} md={6} lg={4} xl={2}>
               <Form.Item
                 name="DCER"
                 label="现金估值比(动)"
@@ -351,7 +351,7 @@ export default () => {
                 <InputNumber step={1}></InputNumber>
               </Form.Item>
             </Col>
-            <Col xs={12} sm={8} md={6} lg={4} xl={2} xxl={1}>
+            <Col xs={12} sm={8} md={6} lg={4} xl={2}>
               <Form.Item
                 name="DPER"
                 label="利润估值比(动)"
@@ -363,7 +363,7 @@ export default () => {
                 <InputNumber step={1}></InputNumber>
               </Form.Item>
             </Col>
-            <Col xs={12} sm={8} md={6} lg={4} xl={2} xxl={1}>
+            <Col xs={12} sm={8} md={6} lg={4} xl={2}>
               <Form.Item
                 name="ROE"
                 label="净资产收益率（ROE）"
