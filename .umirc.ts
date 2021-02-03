@@ -1,28 +1,33 @@
-import { defineConfig } from "umi";
-import theme from "./src/theme/";
+import { defineConfig } from 'umi';
+import theme from './src/theme/';
 
 export default defineConfig({
   nodeModulesTransform: {
-    type: "none",
+    type: 'none',
   },
   routes: [
     {
-      path: "/",
+      path: '/',
       routes: [
-        { path: "/", component: "index" },
-        { path: "/result/", component: "result" },
-        { redirect: "/" },
+        { path: '/', component: 'index' },
+        { path: '/result/', component: 'result' },
+        { redirect: '/' },
       ],
     },
   ],
   theme,
-  hash: true,
-  title: "股票加权计算器",
-  base: "/stock",
-  publicPath: "/stock/",
-  runtimePublicPath: true,
+  title: '股票加权计算器',
   dynamicImport: {
-    loading: "@/Loading",
+    loading: '@/Loading',
   },
-  favicon: "./assets/favicon.ico",
+  favicon: './assets/favicon.ico',
+
+  hash: true,
+  base: '/stock',
+  publicPath: '/stock/',
+  runtimePublicPath: true,
+  externals: {
+    moment: 'moment',
+  },
+  scripts: ['https://lib.baomitu.com/moment.js/latest/moment.min.js'],
 });
