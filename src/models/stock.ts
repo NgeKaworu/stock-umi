@@ -1,95 +1,95 @@
-import { ModalSchma } from "@/models/global";
+import { ModalSchma } from '@/models/global';
 
-import { RESTful } from "@/http";
-import { SafeNumber } from "@/utils/Number";
+import { RESTful } from '@/http';
+import { SafeNumber } from '@/utils/Number';
 
 export interface InfoTime {
   _id: string;
 }
 
 export interface Enterprise {
-  "id": string;
-  "CreateDate": string;
-  "code": string; //股票代号
-  "ReportDate": string; //报告日期
-  "Title": string; //报告名称
-  "Epsjb": string; //基本每股收益(元)
-  "Epskcjb": string; //扣非每股收益(元)
-  "Epsxs": string; //稀释每股收益(元)
-  "Bps": string; //每股净资产(元)
-  "Mgzbgj": string; //每股资本公积(元)
-  "Mgwfplr": string; //每股未分配利润(元)
-  "Mgjyxjje": string; //每股经营现金流(元)
-  "Totalincome": string; //营业总收入(元)
-  "Grossprofit": string; //毛利润(元)
-  "Parentnetprofit": string; //归属净利润(元)
-  "Bucklenetprofit": string; //扣非净利润(元)
-  "Totalincomeyoy": string; //营业总收入同比增长
-  "Parentnetprofityoy": string; //归属净利润同比增长
-  "Bucklenetprofityoy": string; //扣非净利润同比增长
-  "Totalincomerelativeratio": string; //营业总收入滚动环比增长
-  "Parentnetprofitrelativeratio": string; //归属净利润滚动环比增长
-  "Bucklenetprofitrelativeratio": string; //扣非净利润滚动环比增长
-  "Roejq": string; //净资产收益率(加权)
-  "Roekcjq": string; //净资产收益率(扣非/加权)
-  "Allcapitalearningsrate": string; //总资产收益率(加权)
-  "Grossmargin": string; //毛利率
-  "Netinterest": string; //净利率
-  "Accountsrate": string; //预收账款/营业收入
-  "Salesrate": string; //销售净现金流/营业收入
-  "Operatingrate": string; //经营净现金流/营业收入
-  "Taxrate": string; //实际税率
-  "Liquidityratio": string; //流动比率
-  "Quickratio": string; //速动比率
-  "Cashflowratio": string; //现金流量比率
-  "Assetliabilityratio": string; //资产负债率
-  "Equitymultiplier": string; //权益乘数
-  "Equityratio": string; //产权比率
-  "Totalassetsdays": string; //总资产周转天数(天)
-  "Inventorydays": string; //存货周转天数(天)
-  "Accountsreceivabledays": string; //应收账款周转天数(天)
-  "Totalassetrate": string; //总资产周转率(次)
-  "Inventoryrate": string; //存货周转率(次)
-  "Accountsreceiveablerate": string; //应收账款周转率(次)
+  id: string;
+  CreateDate: string;
+  code: string; //股票代号
+  ReportDate: string; //报告日期
+  Title: string; //报告名称
+  Epsjb: string; //基本每股收益(元)
+  Epskcjb: string; //扣非每股收益(元)
+  Epsxs: string; //稀释每股收益(元)
+  Bps: string; //每股净资产(元) [增发风险]
+  Mgzbgj: string; //每股资本公积(元)
+  Mgwfplr: string; //每股未分配利润(元)
+  Mgjyxjje: string; //每股经营现金流(元)
+  Totalincome: string; //营业总收入(元)
+  Grossprofit: string; //毛利润(元)
+  Parentnetprofit: string; //归属净利润(元)
+  Bucklenetprofit: string; //扣非净利润(元)
+  Totalincomeyoy: string; //营业总收入同比增长
+  Parentnetprofityoy: string; //归属净利润同比增长
+  Bucklenetprofityoy: string; //扣非净利润同比增长
+  Totalincomerelativeratio: string; //营业总收入滚动环比增长
+  Parentnetprofitrelativeratio: string; //归属净利润滚动环比增长
+  Bucklenetprofitrelativeratio: string; //扣非净利润滚动环比增长
+  Roejq: string; //净资产收益率(加权)
+  Roekcjq: string; //净资产收益率(扣非/加权)
+  Allcapitalearningsrate: string; //总资产收益率(加权)
+  Grossmargin: string; //毛利率
+  Netinterest: string; //净利率
+  Accountsrate: string; //预收账款/营业收入
+  Salesrate: string; //销售净现金流/营业收入
+  Operatingrate: string; //经营净现金流/营业收入
+  Taxrate: string; //实际税率
+  Liquidityratio: string; //流动比率
+  Quickratio: string; //速动比率
+  Cashflowratio: string; //现金流量比率
+  Assetliabilityratio: string; //资产负债率
+  Equitymultiplier: string; //权益乘数
+  Equityratio: string; //产权比率
+  Totalassetsdays: string; //总资产周转天数(天)
+  Inventorydays: string; //存货周转天数(天)
+  Accountsreceivabledays: string; //应收账款周转天数(天)
+  Totalassetrate: string; //总资产周转率(次)
+  Inventoryrate: string; //存货周转率(次)
+  Accountsreceiveablerate: string; //应收账款周转率(次)
 }
 
 export interface CurrentInfo {
-  "name": string;
-  "todayOpeningPrice": string;
-  "yesterdayOpeningPrice": string;
-  "currentPrice": string;
-  "topPrice": string;
-  "floorPrice": string;
-  "bidPrice": string;
-  "auctionPrice": string;
-  "vol": string;
-  "amount": string;
-  "buy1Num": string;
-  "buy1Price": string;
-  "buy2Num": string;
-  "buy2Price": string;
-  "buy3Num": string;
-  "buy3Price": string;
-  "buy4Num": string;
-  "buy4Price": string;
-  "buy5Num": string;
-  "buy5Price": string;
-  "sell1Num": string;
-  "sell1Price": string;
-  "sell2Num": string;
-  "sell2Price": string;
-  "sell3Num": string;
-  "sell3Price": string;
-  "sell4Num": string;
-  "sell4Price": string;
-  "sell5Num": string;
-  "sell5Price": string;
-  "date": string;
-  "time": string;
-  "id": string;
-  "createDate": string;
-  "code": string;
-  "classify": string;
+  name: string;
+  todayOpeningPrice: string;
+  yesterdayOpeningPrice: string;
+  currentPrice: string;
+  topPrice: string;
+  floorPrice: string;
+  bidPrice: string;
+  auctionPrice: string;
+  vol: string;
+  amount: string;
+  buy1Num: string;
+  buy1Price: string;
+  buy2Num: string;
+  buy2Price: string;
+  buy3Num: string;
+  buy3Price: string;
+  buy4Num: string;
+  buy4Price: string;
+  buy5Num: string;
+  buy5Price: string;
+  sell1Num: string;
+  sell1Price: string;
+  sell2Num: string;
+  sell2Price: string;
+  sell3Num: string;
+  sell3Price: string;
+  sell4Num: string;
+  sell4Price: string;
+  sell5Num: string;
+  sell5Price: string;
+  date: string;
+  time: string;
+  id: string;
+  createDate: string;
+  code: string;
+  classify: string;
 }
 
 // Stock 股票基本结构
@@ -150,14 +150,16 @@ export class Stock implements StockStruct {
   // CalcPB 计算市净率
   CalcPB(): StockStruct {
     //市净率 = 股价 / 每股净资产
-    this.PB = SafeNumber(this.CurrentInfo?.currentPrice) /
+    this.PB =
+      SafeNumber(this.CurrentInfo?.currentPrice) /
       SafeNumber(this.Enterprise?.[0]?.Bps);
     return this;
   }
   // CalcPE 计算市盈率
   CalcPE(): StockStruct {
     // 市盈率 = 股价 / 每股未分配利润
-    this.PE = SafeNumber(this.Enterprise?.[0]?.Mgwfplr) /
+    this.PE =
+      SafeNumber(this.Enterprise?.[0]?.Mgwfplr) /
       SafeNumber(this.CurrentInfo?.currentPrice);
     return this;
   }
@@ -166,15 +168,11 @@ export class Stock implements StockStruct {
     const len = SafeNumber(this.Enterprise?.length);
     let sum: number = 0;
 
-    for (let k = 0; k < len; ++k) {
-      const n = k + 1;
-      if (n >= len) {
-        break;
-      }
-      const lastBps = SafeNumber(this?.Enterprise?.[n]?.Bps);
-      const Bps = SafeNumber(this?.Enterprise?.[k]?.Bps);
+    for (let n = 1; n < len; ++n) {
+      const next = SafeNumber(this?.Enterprise?.[n]?.Bps);
+      const pre = SafeNumber(this?.Enterprise?.[n - 1]?.Bps);
 
-      const curAAGR = (Bps - lastBps) / lastBps;
+      const curAAGR = (next - pre) / pre;
 
       sum += curAAGR;
     }
@@ -190,35 +188,36 @@ export class Stock implements StockStruct {
   }
   // CalcROE 计算净资产收益率
   CalcROE(): StockStruct {
-    // 净资产收益率 = 每股净值 / 每股未分配利润
-    this.ROE = SafeNumber(this?.Enterprise?.[0]?.Mgwfplr) /
+    // 净资产收益率 = 每股未分配利润 / 每股净值
+    this.ROE =
+      SafeNumber(this?.Enterprise?.[0]?.Mgwfplr) /
       SafeNumber(this?.Enterprise?.[0]?.Bps);
     return this;
   }
   // CalcDCE 计算动态现金估值
   CalcDCE(r: number): StockStruct {
     // 动态现金估值 = 每股经营现金流 / (贴现率 - 平均年增长率)
-    this.DCE = SafeNumber(this?.Enterprise?.[0]?.Mgjyxjje) /
-      (r - SafeNumber(this.AAGR));
+    this.DCE =
+      SafeNumber(this?.Enterprise?.[0]?.Mgjyxjje) / (r - SafeNumber(this.AAGR));
     return this;
   }
   // CalcDCER 估值现值比
   CalcDCER(): StockStruct {
-    this.DCER = SafeNumber(this?.DCE) /
-      SafeNumber(this?.CurrentInfo?.currentPrice);
+    this.DCER =
+      SafeNumber(this?.DCE) / SafeNumber(this?.CurrentInfo?.currentPrice);
     return this;
   }
   // CalcDPE 计算动态利润估值
   CalcDPE(r: number): StockStruct {
     // 动态利润估值 = 每股净资产 / (贴现率 - 平均年增长率)
-    this.DPE = SafeNumber(this?.Enterprise?.[0]?.Bps) /
-      (r - SafeNumber(this?.AAGR));
+    this.DPE =
+      SafeNumber(this?.Enterprise?.[0]?.Bps) / (r - SafeNumber(this?.AAGR));
     return this;
   }
   // CalcDPER 估值现值比
   CalcDPER(): StockStruct {
-    this.DPER = SafeNumber(this?.DPE) /
-      SafeNumber(this?.CurrentInfo?.currentPrice);
+    this.DPER =
+      SafeNumber(this?.DPE) / SafeNumber(this?.CurrentInfo?.currentPrice);
     return this;
   }
 }
@@ -237,18 +236,17 @@ const StockModal: ModalSchma = {
   effects: {
     *listEnterprise(_, { put }) {
       try {
-        const a = sessionStorage.getItem("enterprise");
+        const a = sessionStorage.getItem('enterprise');
         if (a) {
           const enterprise = JSON.parse(a);
-          yield put({ type: "save", payload: { enterpriseList: enterprise } });
+          yield put({ type: 'save', payload: { enterpriseList: enterprise } });
           return enterprise;
         } else {
-          const { data } = yield RESTful.get(
-            "/main/enterprise/list",
-            { silence: "success" },
-          );
-          data && sessionStorage.setItem("enterprise", JSON.stringify(data));
-          yield put({ type: "save", payload: { enterpriseList: data } });
+          const { data } = yield RESTful.get('/main/enterprise/list', {
+            silence: 'success',
+          });
+          data && sessionStorage.setItem('enterprise', JSON.stringify(data));
+          yield put({ type: 'save', payload: { enterpriseList: data } });
           return data;
         }
       } catch (e) {
@@ -257,12 +255,11 @@ const StockModal: ModalSchma = {
     },
     *fetchEnterprise(_, { put }) {
       try {
-        const { data } = yield RESTful.get(
-          "/main/enterprise/fetch",
-          { silence: "success" },
-        );
-        data && sessionStorage.setItem("enterprise", JSON.stringify(data));
-        yield put({ type: "save", payload: { enterpriseList: data } });
+        const { data } = yield RESTful.get('/main/enterprise/fetch', {
+          silence: 'success',
+        });
+        data && sessionStorage.setItem('enterprise', JSON.stringify(data));
+        yield put({ type: 'save', payload: { enterpriseList: data } });
         return data;
       } catch (e) {
         console.error(e);
@@ -273,16 +270,18 @@ const StockModal: ModalSchma = {
         const a = sessionStorage.getItem(`currrent-${payload}`);
         if (a) {
           const current = JSON.parse(a);
-          yield put({ type: "save", payload: { currentList: current } });
+          yield put({ type: 'save', payload: { currentList: current } });
           return current;
         } else {
           const { data } = yield RESTful.get(
             `/main/current-info/list/${payload}`,
-            { silence: "success" },
+            {
+              silence: 'success',
+            },
           );
           data &&
             sessionStorage.setItem(`currrent-${payload}`, JSON.stringify(data));
-          yield put({ type: "save", payload: { currentList: data } });
+          yield put({ type: 'save', payload: { currentList: data } });
           return data;
         }
       } catch (e) {
@@ -291,35 +290,33 @@ const StockModal: ModalSchma = {
     },
     *fetchCurrent(_, { put }) {
       try {
-        const { data } = yield RESTful.get(
-          "/main/current-info/fetch",
-          { silence: "success" },
-        );
-        const date: InfoTime[] = yield put({ type: "listInfoTime" });
+        const { data } = yield RESTful.get('/main/current-info/fetch', {
+          silence: 'success',
+        });
+        const date: InfoTime[] = yield put({ type: 'listInfoTime' });
         data &&
           sessionStorage.setItem(
             `currrent-${date[0]._id}`,
             JSON.stringify(data),
           );
-        yield put({ type: "save", payload: { currentList: data } });
+        yield put({ type: 'save', payload: { currentList: data } });
         return data;
       } catch (e) {
         console.error(e);
       }
     },
     *listInfoTime(_, { put }) {
-      const { data } = yield RESTful.get(
-        "/main/current-time/list",
-        { silence: "success" },
-      );
-      yield put({ type: "save", payload: { listDate: data } });
+      const { data } = yield RESTful.get('/main/current-time/list', {
+        silence: 'success',
+      });
+      yield put({ type: 'save', payload: { listDate: data } });
       return data;
     },
   },
   subscriptions: {
     setup({ dispatch }): void {
-      dispatch({ type: "listInfoTime" });
-      dispatch({ type: "listEnterprise" });
+      dispatch({ type: 'listInfoTime' });
+      dispatch({ type: 'listEnterprise' });
     },
   },
 };
