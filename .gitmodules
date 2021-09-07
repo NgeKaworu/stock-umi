@@ -1,3 +1,0 @@
-[submodule "src/js-sdk"]
-	path = src/js-sdk
-	url = https://github.com/NgeKaworu/js-sdk.git

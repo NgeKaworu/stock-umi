@@ -3,6 +3,6 @@ export const mainHost = () => {
     case 'production':
       return 'https://api.furan.xyz/stock';
     default:
-      return 'http://localhost:8041';
+      return 'http://localhost:8051';
   }
 };

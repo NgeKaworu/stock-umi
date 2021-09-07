@@ -2,17 +2,17 @@ import { defineConfig } from 'umi';
 import theme from './src/theme/';
 
 export default defineConfig({
+  qiankun: {
+    slave: {},
+  },
+  fastRefresh: {},
   nodeModulesTransform: {
     type: 'none',
   },
   routes: [
     {
       path: '/',
-      routes: [
-        { path: '/', component: 'index' },
-        { path: '/result/', component: 'result' },
-        { redirect: '/' },
-      ],
+      routes: [{ path: '/', component: 'index' }, { redirect: '/' }],
     },
   ],
   theme,
@@ -30,4 +30,12 @@ export default defineConfig({
     moment: 'moment',
   },
   scripts: ['https://lib.baomitu.com/moment.js/latest/moment.min.js'],
+  extraBabelPlugins: [
+    [
+      'babel-plugin-styled-components',
+      {
+        namespace: 'to-do-list',
+      },
+    ],
+  ],
 });
