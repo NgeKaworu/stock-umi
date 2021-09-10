@@ -4,7 +4,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "importHelpers": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "esModuleInterop": true,
     "sourceMap": true,
     "baseUrl": "./",
@@ -20,6 +20,7 @@
     "src/**/*",
     "config/**/*",
     ".umirc.ts",
-    "typings.d.ts"
+    "typings.d.ts",
+    "public/worker.js"
   ]
 }
