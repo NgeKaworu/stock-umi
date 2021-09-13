@@ -16,7 +16,7 @@ export default defineConfig({
     },
   ],
   theme,
-  title: '股票加权计算器',
+  title: '加权计算器',
   dynamicImport: {
     loading: '@/Loading',
   },
