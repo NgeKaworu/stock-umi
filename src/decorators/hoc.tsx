@@ -1,4 +1,3 @@
-import ChildrenRender from './ChildrenRender';
 import React, { ReactElement, cloneElement } from 'react';
 import { curry, maybe, compose } from './utils';
 
@@ -22,3 +21,12 @@ export const IOC = curry(
     </ChildrenRender>
   ),
 );
+
+export function ChildrenRender<T extends unknown>({
+  children,
+  ...props
+}: {
+  children: (props: T) => ReactElement;
+}) {
+  return children?.(props as T);
+}

@@ -1,6 +1,6 @@
 import React, { cloneElement, useEffect, useState } from 'react';
 import { Empty, Spin } from 'antd';
-import ChildrenRender from '@/components/ChildrenRender';
+import { ChildrenRender } from '@/decorators/hoc';
 import { FlatTree } from '@/components/LieTree/utils/flatTree';
 import { Tree } from '@/components/LieTree/utils/tree';
 import { uniqueRight } from '@/components/LieTree/utils';
