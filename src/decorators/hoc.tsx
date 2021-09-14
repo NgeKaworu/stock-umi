@@ -9,15 +9,17 @@ export interface ForwardProps {
 export const IOC = curry(
   (fns: Array<(pars: any) => any>, Element: ReactElement) => (
     <ChildrenRender<ForwardProps>>
-      {(forwardProps) => {
-        const ele = compose(...fns)(cloneElement(Element, forwardProps));
-        return cloneElement(ele, {
-          onChange: compose(
-            maybe(forwardProps?.onChange),
-            maybe(ele?.props?.onChange),
-          ),
-        });
-      }}
+      {(forwardProps) =>
+        compose(...fns)(
+          cloneElement(Element, {
+            ...forwardProps,
+            onChange: compose(
+              maybe(forwardProps?.onChange),
+              maybe(Element?.props?.onChange),
+            ),
+          }),
+        )
+      }
     </ChildrenRender>
   ),
 );

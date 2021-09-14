@@ -17,6 +17,6 @@ export function curry(func: Function) {
 }
 
 export const maybe = curry((fn: (par: any) => any, arg: any) => {
-  const tmp = fn(arg);
+  const tmp = fn?.(arg);
   return ![NaN, undefined, null].includes(tmp) ? tmp : arg;
 });
