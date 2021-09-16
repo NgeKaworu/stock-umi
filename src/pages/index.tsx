@@ -13,7 +13,6 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import SearchForm from '@/components/SearchForm';
 import { RESTful } from '@/http';
 import { mainHost } from '@/http/host';
-import workerURL from './innerWorker';
 import isValidValue from '@/utils/isValidValue';
 import { DnDForm, DnDFormProps } from '@/components/DnDForm';
 import Search from '@/decorators/Select/Search';
@@ -28,10 +27,14 @@ const { Item, ErrorList } = Form;
 const { RangePicker } = DatePicker;
 
 export default () => {
-  const worker = new Worker(workerURL);
+  const worker = new Worker('/worker.js');
   const [dataSource, setDataSource] = useState<Stock[]>();
+  const workerHandler: Worker['onmessage'] = (...args) => {
+    console.log('onmessage', args);
+  };
+  const [calculating, setCalculating] = useState<boolean>();
   useEffect(() => {
-    worker.onmessage = (...args) => console.log('args', ...args);
+    worker.onmessage = workerHandler;
     return () => worker.terminate();
   }, [worker]);
 
@@ -134,6 +137,7 @@ export default () => {
           {...field}
           wrapperCol={{ style: { alignItems: 'center' } }}
           name={[field.name, 'isAsc']}
+          valuePropName="checked"
         >
           <Switch />
         </Item>
@@ -166,6 +170,11 @@ export default () => {
     } catch {}
   }
 
+  async function calc(value: any) {
+    worker.postMessage({ type: 'calc', payload: { dataSource, ...value } });
+    setCalculating(true);
+  }
+
   return (
     <>
       <SearchForm
@@ -179,11 +188,11 @@ export default () => {
           <RangePicker />
         </Item>
         <Item>
-          <Button htmlType="submit">提交</Button>
+          <Button htmlType="submit">查询</Button>
         </Item>
       </SearchForm>
 
-      <Form>
+      <Form onFinish={calc}>
         <DndProvider backend={HTML5Backend}>
           <DnDForm
             name="weights"
@@ -216,7 +225,11 @@ export default () => {
           </DnDForm>
         </DndProvider>
         <Item>
-          <Button htmlType="submit" disabled={!isValidValue(dataSource)}>
+          <Button
+            htmlType="submit"
+            disabled={!isValidValue(dataSource)}
+            // loading={calculating}
+          >
             计算
           </Button>
         </Item>

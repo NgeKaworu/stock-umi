@@ -15,4 +15,16 @@ export interface Stock {
   classify: string; //板块
   name: string; //股票名字
   createAt: Date; // 创建时间
+  grade: number; // 评分
 }
+
+export interface Weight {
+  field: keyof Stock;
+  isAsc: boolean;
+  coefficeient: number;
+}
+
+export const Sort2Num = new Map([
+  [true, -1],
+  [false, 1],
+]);

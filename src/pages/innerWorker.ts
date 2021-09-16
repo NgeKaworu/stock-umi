@@ -1,21 +1,19 @@
-// worker.js
+// worker.js blob 版
 const workercode = () => {
   let lock = 0;
 
   self.onmessage = function (e) {
-    if (lock > 0) return;
+    if (lock > 0) {
+      return self.postMessage({ type: 'locked' });
+    }
     lock++;
     console.log('self.onmessage', e);
     console.log('lock', lock);
-    consumer();
   };
 
-  function consumer() {
-    setTimeout(() => {
-      lock--;
-      self.postMessage({ foo: 'bar' });
-    }, 5000);
-  }
+  self.onerror = function (e) {
+    console.log(e);
+  };
 };
 
 let code = workercode.toString();
