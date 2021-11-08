@@ -1,14 +1,5 @@
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Switch,
-  Tooltip,
-} from 'antd';
+import { Button, DatePicker, Form, Input, InputNumber, Select, Switch, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import SearchForm from '@/components/SearchForm';
 import { RESTful } from '@/http';
@@ -116,8 +107,7 @@ export default () => {
                       ...opt,
                       label: (
                         <>
-                          {`${opt.value} - ${opt.label}`}{' '}
-                          {tooltipMap.get(opt.value)}
+                          {`${opt.value} - ${opt.label}`} {tooltipMap.get(opt.value)}
                         </>
                       ),
                       disabled: usedInOther?.includes(opt?.value),
@@ -147,11 +137,7 @@ export default () => {
       title: '操作',
       render: ({ field, operation }) => (
         <Item {...field} wrapperCol={{ style: { alignItems: 'center' } }}>
-          <Button
-            danger
-            type="link"
-            onClick={() => operation.remove(field.name)}
-          >
+          <Button danger type="link" onClick={() => operation.remove(field.name)}>
             删除
           </Button>
         </Item>
@@ -162,10 +148,9 @@ export default () => {
   async function onFinish(value: any) {
     try {
       const { dataTime } = value,
-        res = await RESTful.get(
-          `${mainHost()}/stock-list?dataTime=${JSON.stringify(dataTime)}`,
-          { timeout: 0 },
-        );
+        res = await RESTful.get(`stock/stock-list?dataTime=${JSON.stringify(dataTime)}`, {
+          timeout: 0,
+        });
       setDataSource(res?.data);
     } catch {}
   }
@@ -213,10 +198,7 @@ export default () => {
                 <ErrorList errors={meta.errors} />
                 {title}
                 {body}
-                <Button
-                  type="link"
-                  onClick={() => operation.add({ isAsc: true, coefficient: 1 })}
-                >
+                <Button type="link" onClick={() => operation.add({ isAsc: true, coefficient: 1 })}>
                   {' '}
                   + 添加字段
                 </Button>
@@ -225,11 +207,7 @@ export default () => {
           </DnDForm>
         </DndProvider>
         <Item>
-          <Button
-            htmlType="submit"
-            disabled={!isValidValue(dataSource)}
-            // loading={calculating}
-          >
+          <Button htmlType="submit" disabled={!isValidValue(dataSource)} loading={calculating}>
             计算
           </Button>
         </Item>

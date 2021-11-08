@@ -20,12 +20,31 @@ export default defineConfig({
   dynamicImport: {
     loading: '@/Loading',
   },
-  favicon: './assets/favicon.ico',
-
+  helmet: false,
+  dva: false,
+  model: false,
+  initialState: false,
+  layout: false,
+  locale: false,
+  preact: false,
+  request: false,
+  sass: false,
   hash: true,
-  base: '/stock',
-  publicPath: '/stock/',
+  base: '/micro/stock',
+  publicPath: '/micro/stock/',
   runtimePublicPath: true,
+  devServer: {
+    port: 80,
+    proxy: {
+      '/api/stock': {
+        target: 'http://stock-go-dev',
+        changeOrigin: true,
+        pathRewrite: {
+          '/api/stock': '',
+        },
+      },
+    },
+  },
   externals: {
     moment: 'moment',
   },
@@ -34,7 +53,7 @@ export default defineConfig({
     [
       'babel-plugin-styled-components',
       {
-        namespace: 'to-do-list',
+        namespace: 'stock',
       },
     ],
   ],
