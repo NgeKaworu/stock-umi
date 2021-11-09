@@ -17,9 +17,7 @@ export default defineConfig({
   ],
   theme,
   title: '加权计算器',
-  dynamicImport: {
-    loading: '@/Loading',
-  },
+
   helmet: false,
   dva: false,
   model: false,
