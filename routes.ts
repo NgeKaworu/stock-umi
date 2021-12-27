@@ -1,6 +1,6 @@
 export default [
   {
     path: '/',
-    routes: [{ path: '/', component: 'index' }, { redirect: '/' }],
+    routes: [{ path: '/', component: 'index' }],
   },
 ];
