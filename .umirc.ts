@@ -1,5 +1,6 @@
 import { defineConfig } from 'umi';
 import theme from './src/theme/';
+import routes from './routes';
 
 export default defineConfig({
   qiankun: {
@@ -9,12 +10,7 @@ export default defineConfig({
   nodeModulesTransform: {
     type: 'none',
   },
-  routes: [
-    {
-      path: '/',
-      routes: [{ path: '/', component: 'index' }, { redirect: '/' }],
-    },
-  ],
+  routes,
   theme,
   title: '加权计算器',
 

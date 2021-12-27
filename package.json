@@ -29,17 +29,14 @@
     "react-dnd-html5-backend": "^14.0.2",
     "react-dom": "^17.x",
     "react-query": "^3.x",
-    "styled-components": "^5.3.3",
     "umi": "^3.5.20",
     "unstated-next": "^1.1.0"
   },
   "devDependencies": {
-    "@types/styled-components": "^5.1.15",
     "@umijs/fabric": "^2.8.1",
     "@umijs/plugin-qiankun": "^2.35.2",
     "@umijs/preset-react": "^1.8.25",
     "@umijs/test": "^3.5.20",
-    "babel-plugin-styled-components": "^1.13.3",
     "lint-staged": "^11.2.6",
     "prettier": "^2.4.1",
     "yorkie": "^2.0.0"
