@@ -1,37 +1,20 @@
 import { defineConfig } from 'umi';
 import theme from './src/theme/';
 import routes from './routes';
+import base from './src/js-sdk/configs/.umirc.default';
 
 export default defineConfig({
-  qiankun: {
-    slave: {},
-  },
-  fastRefresh: {},
-  nodeModulesTransform: {
-    type: 'none',
-  },
+  ...base,
   routes,
   theme,
   title: '加权计算器',
-
-  helmet: false,
-  dva: false,
-  model: false,
-  initialState: false,
-  layout: false,
-  locale: false,
-  preact: false,
-  request: false,
-  sass: false,
-  hash: true,
-  base: '/micro/stock',
+  base: '/stock',
   publicPath: '/micro/stock/',
-  runtimePublicPath: true,
   devServer: {
-    port: 80,
+    port: 8061,
     proxy: {
       '/api/stock': {
-        target: 'http://stock-go-dev',
+        target: 'http://localhost:8060',
         changeOrigin: true,
         pathRewrite: {
           '/api/stock': '',
@@ -39,16 +22,4 @@ export default defineConfig({
       },
     },
   },
-  externals: {
-    moment: 'moment',
-  },
-  scripts: ['https://lib.baomitu.com/moment.js/latest/moment.min.js'],
-  extraBabelPlugins: [
-    [
-      'babel-plugin-styled-components',
-      {
-        namespace: 'stock',
-      },
-    ],
-  ],
 });

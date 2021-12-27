@@ -1,17 +1,18 @@
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
-import { Button, DatePicker, Form, Input, InputNumber, Select, Switch, Tooltip } from 'antd';
+import { ReactNode, useEffect, useState } from 'react';
+import { Button, DatePicker, Form, InputNumber, Switch, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import SearchForm from '@/components/SearchForm';
-import { restful as RESTful } from '@/http';
-import isValidValue from '@/utils/isValidValue';
-import { DnDForm, DnDFormProps } from '@/components/DnDForm';
-import Search from '@/decorators/Select/Search';
-import { compose } from '@/decorators/utils';
-import Options from '@/utils/Options';
+
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import shouldUpdateHOF from '@/decorators/shouldUpdateHOF';
+
 import { Stock } from './modal';
+import EdiTable, { EdiTableColumnType } from '@/js-sdk/components/EdiTable';
+import SearchForm from '@/js-sdk/components/SearchForm';
+import shouldUpdateHOF from '@/js-sdk/decorators/shouldUpdateHOF';
+import isValidValue from '@/js-sdk/utils/isValidValue';
+import Options from '@/js-sdk/utils/Options';
+import SearchSelect from '@/js-sdk/components/SearchSelect';
+import { restful } from '@/js-sdk/utils/http';
 
 const { Item, ErrorList } = Form;
 const { RangePicker } = DatePicker;
@@ -67,10 +68,10 @@ export default () => {
     ['AAGR', '平均年增长率'],
   ]);
 
-  const columns: DnDFormProps['columns'] = [
+  const columns: EdiTableColumnType<Stock>[] = [
     {
       title: '权重系数',
-      render: ({ field }) => (
+      renderFormItem: ({ field }) => (
         <Item
           {...field}
           wrapperCol={{ style: { alignItems: 'center' } }}
@@ -82,7 +83,7 @@ export default () => {
     },
     {
       title: '字段',
-      render: ({ field }) => (
+      renderFormItem: ({ field }) => (
         <Item noStyle shouldUpdate={shouldUpdateHOF(['weights'])}>
           {({ getFieldValue }) => {
             const weights = getFieldValue('weights'),
@@ -99,20 +100,18 @@ export default () => {
                 name={[field.name, 'field']}
                 rules={[{ required: true }]}
               >
-                {compose(Search)(
-                  <Select
-                    allowClear
-                    options={Options(fields).toOpt?.map((opt: any) => ({
-                      ...opt,
-                      label: (
-                        <>
-                          {`${opt.value} - ${opt.label}`} {tooltipMap.get(opt.value)}
-                        </>
-                      ),
-                      disabled: usedInOther?.includes(opt?.value),
-                    }))}
-                  />,
-                )}
+                <SearchSelect
+                  allowClear
+                  options={Options(fields).toOpt?.map((opt: any) => ({
+                    ...opt,
+                    label: (
+                      <>
+                        {`${opt.value} - ${opt.label}`} {tooltipMap.get(opt.value)}
+                      </>
+                    ),
+                    disabled: usedInOther?.includes(opt?.value),
+                  }))}
+                />
               </Item>
             );
           }}
@@ -121,7 +120,7 @@ export default () => {
     },
     {
       title: '是否生序',
-      render: ({ field }) => (
+      renderFormItem: ({ field }) => (
         <Item
           {...field}
           wrapperCol={{ style: { alignItems: 'center' } }}
@@ -134,7 +133,7 @@ export default () => {
     },
     {
       title: '操作',
-      render: ({ field, operation }) => (
+      renderFormItem: ({ field, operation }) => (
         <Item {...field} wrapperCol={{ style: { alignItems: 'center' } }}>
           <Button danger type="link" onClick={() => operation.remove(field.name)}>
             删除
@@ -147,7 +146,7 @@ export default () => {
   async function onFinish(value: any) {
     try {
       const { dataTime } = value,
-        res = await RESTful.get(`stock/stock-list?dataTime=${JSON.stringify(dataTime)}`, {
+        res = await restful.get(`stock/stock-list?dataTime=${JSON.stringify(dataTime)}`, {
           timeout: 0,
         });
       setDataSource(res?.data);
@@ -178,10 +177,10 @@ export default () => {
 
       <Form onFinish={calc}>
         <DndProvider backend={HTML5Backend}>
-          <DnDForm
-            name="weights"
-            columns={columns}
+          <EdiTable
+            tableProps={{ columns }}
             formListProps={{
+              name: 'weights',
               rules: [
                 {
                   validator(_, value) {
@@ -192,10 +191,10 @@ export default () => {
               ],
             }}
           >
-            {({ title, body, meta, operation }) => (
+            {({ body, meta, operation }) => (
               <>
                 <ErrorList errors={meta.errors} />
-                {title}
+
                 {body}
                 <Button type="link" onClick={() => operation.add({ isAsc: true, coefficient: 1 })}>
                   {' '}
@@ -203,7 +202,7 @@ export default () => {
                 </Button>
               </>
             )}
-          </DnDForm>
+          </EdiTable>
         </DndProvider>
         <Item>
           <Button htmlType="submit" disabled={!isValidValue(dataSource)} loading={calculating}>
