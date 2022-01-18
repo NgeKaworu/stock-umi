@@ -11,7 +11,6 @@ export default defineConfig({
   dynamicImport: {
     loading: '@/Loading',
   },
-  webpack5: {},
   helmet: false,
   dva: false,
   model: false,
