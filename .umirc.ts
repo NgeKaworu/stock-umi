@@ -7,6 +7,7 @@ export default defineConfig({
   ...base,
   routes,
   theme,
+  webpack5: {},
   title: '加权计算器',
   base: '/stock',
   publicPath: '/micro/stock/',

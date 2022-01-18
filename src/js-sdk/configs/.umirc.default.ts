@@ -1,10 +1,10 @@
 import { defineConfig } from 'umi';
+import { IConfig } from 'umi/types';
 
 export default defineConfig({
   qiankun: {
     slave: {},
   },
-  fastRefresh: {},
   nodeModulesTransform: {
     type: 'none',
   },
@@ -70,4 +70,4 @@ export default defineConfig({
       },
     });
   },
-});
+}) as IConfig;

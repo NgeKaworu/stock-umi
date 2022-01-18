@@ -41,6 +41,7 @@
     "@umijs/test": "^3.5.20",
     "lint-staged": "^11.2.6",
     "prettier": "^2.4.1",
+    "webpack": "^5.66.0",
     "yorkie": "^2.0.0"
   }
 }

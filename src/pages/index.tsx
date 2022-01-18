@@ -5,7 +5,7 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { Stock } from './modal';
+import { Stock } from '../model';
 import EdiTable, { EdiTableColumnType } from '@/js-sdk/components/EdiTable';
 import SearchForm from '@/js-sdk/components/SearchForm';
 import shouldUpdateHOF from '@/js-sdk/decorators/shouldUpdateHOF';
@@ -16,7 +16,7 @@ import { restful } from '@/js-sdk/utils/http';
 
 const { Item, ErrorList } = Form;
 const { RangePicker } = DatePicker;
-const worker = new Worker('/worker.js');
+const worker = new Worker(new URL('../worker/stock.ts', import.meta.url));
 
 export default () => {
   const [dataSource, setDataSource] = useState<Stock[]>();
