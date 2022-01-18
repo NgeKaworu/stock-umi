@@ -16,14 +16,15 @@ import { restful } from '@/js-sdk/utils/http';
 
 const { Item, ErrorList } = Form;
 const { RangePicker } = DatePicker;
+const worker = new Worker('/worker.js');
 
 export default () => {
-  const worker = new Worker('/worker.js');
   const [dataSource, setDataSource] = useState<Stock[]>();
-  const workerHandler: Worker['onmessage'] = (...args) => {
-    console.log('onmessage', args);
-  };
   const [calculating, setCalculating] = useState<boolean>();
+  const workerHandler: Worker['onmessage'] = (e) => {
+    console.log('worker return onmessage', e);
+    setCalculating(false);
+  };
   useEffect(() => {
     worker.onmessage = workerHandler;
     return () => worker.terminate();
