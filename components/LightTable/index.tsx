@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref, CSSProperties } from 'react';
 import { Table } from 'antd';
 import type { TableProps, TableColumnProps } from 'antd';
 import type { ParagraphProps } from 'antd/lib/typography/Paragraph';
@@ -13,7 +13,6 @@ import { _valueTypeRegister } from './valueTypeRegister';
 import prune from '../../struct/tree/prune';
 import trimEndWith from '../../struct/string/trimEndWith';
 import isValidValue from '../../utils/isValidValue';
-import React from 'react';
 
 const { Paragraph, Link } = Typography;
 
@@ -37,6 +36,8 @@ export interface LightColumnProps<RecordType>
   columnEmptyText?: ReactNode;
 
   hideInTable?: boolean;
+
+  ref?: Ref<HTMLDivElement>;
 }
 
 export const globalRenderKey = ['columnEmptyText'] as const;
@@ -244,8 +245,8 @@ function _factory<RecordType>(
 function _calcEllipsisWidth<RecordType>({
   ellipsis,
   width = 'inherit',
-}: LightColumnProps<RecordType>): React.CSSProperties['minWidth'] {
-  let w: React.CSSProperties['minWidth'] = width;
+}: LightColumnProps<RecordType>): CSSProperties['minWidth'] {
+  let w: CSSProperties['minWidth'] = width;
 
   if (typeof w === 'number' || !Number.isNaN(+w)) w = w + 'px';
 
