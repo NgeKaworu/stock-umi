@@ -24,9 +24,11 @@ self.onerror = (e) => {
 
 function calc({ weights, dataSource }: { weights: Weight[]; dataSource: Stock[] }) {
   const temp = [...dataSource],
-    includesKey = weights?.map((w) => w.field);
-  weights?.forEach(sortWeight(preprocess(temp, includesKey)));
-  return temp;
+    includesKey = weights?.map((w) => w.field),
+    processed = preprocess(temp, includesKey);
+  weights?.forEach(sortWeight(processed));
+  lock--;
+  return processed;
 }
 
 function preprocess(dataSource: Stock[], includesKey: Weight['field'][]): Stock[] {
@@ -64,11 +66,11 @@ function group(dataSource: Stock[]): Map<string, Stock[]> {
 }
 
 function sortWeight(dataSource: Stock[]) {
-  return ({ isAsc, field, coefficeient }: Weight) => {
+  return ({ isAsc, field, coefficient: coefficient }: Weight) => {
     dataSource.sort((a, b) => +a?.[field] - +b?.[field] * (Sort2Num?.get(isAsc) ?? 1));
 
     dataSource.forEach(
-      (ds, idx, arr) => (ds.grade = ((ds.grade ?? 0) + arr?.length - idx) * coefficeient),
+      (ds, idx, arr) => (ds.grade = ((ds.grade ?? 0) + arr?.length - idx) * coefficient),
     );
   };
 }

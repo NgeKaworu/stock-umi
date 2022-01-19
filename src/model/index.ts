@@ -21,7 +21,7 @@ export interface Stock {
 export interface Weight {
   field: keyof Stock;
   isAsc: boolean;
-  coefficeient: number;
+  coefficient: number;
 }
 
 export const Sort2Num = new Map([
