@@ -3,7 +3,7 @@ import { Button, Steps, Tag, Form } from 'antd';
 
 import { Stock, Weight as IWeight } from '../model';
 import isValidValue from '@/js-sdk/utils/isValidValue';
-import Weight, { fields, tooltipMap } from './component/Weight';
+import Weight, { decodeWeight, fields, tooltipMap } from './component/Weight';
 import useDrawerForm from '@/js-sdk/components/DrawerForm/useDrawerForm';
 import DataSource from './component/DataSource';
 import LightTable, { LightColumnProps } from '@/js-sdk/components/LightTable';
@@ -16,10 +16,9 @@ const { Item } = Form;
 export default () => {
   const [dataSource, setDataSource] = useState<Stock[]>(),
     [data, setData] = useState<Stock[]>(),
-    [weights, setWeights] = useState<IWeight[]>(),
+    [weights, setWeights] = useState<IWeight[]>(decodeWeight(localStorage.getItem('Weight'))),
     [calculating, setCalculating] = useState<boolean>(),
     workerHandler: Worker['onmessage'] = (e) => {
-      console.log('worker return onmessage', e);
       setData(e?.data?.payload);
       setCalculating(false);
     },

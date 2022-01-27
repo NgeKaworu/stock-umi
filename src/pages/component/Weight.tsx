@@ -6,7 +6,7 @@ import { ReactNode } from 'react';
 import { Button, Form, InputNumber, Switch, Tooltip, Typography } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
-import { Stock } from '../../model';
+import { Weight } from '../../model';
 import EdiTable, { EdiTableColumnType } from '@/js-sdk/components/EdiTable';
 import shouldUpdateHOF from '@/js-sdk/decorators/shouldUpdateHOF';
 import isValidValue from '@/js-sdk/utils/isValidValue';
@@ -55,7 +55,7 @@ export const fields = new Map<string, ReactNode>([
   ['AAGR', '平均年增长率'],
 ]);
 
-const columns: EdiTableColumnType<Stock>[] = [
+const columns: EdiTableColumnType<Weight>[] = [
   {
     title: '权重系数',
     width: 120,
@@ -123,6 +123,16 @@ const columns: EdiTableColumnType<Stock>[] = [
   },
 ];
 
+export const encodeWeight = (s: Weight[]) => JSON.stringify(s);
+
+export const decodeWeight = (j: string | null): Weight[] => {
+  try {
+    return JSON.parse(j ?? '');
+  } catch {
+    return [];
+  }
+};
+
 export default ({
   onSuccess,
   formProps,
@@ -132,6 +142,7 @@ export default ({
   async function onFinish() {
     const { weights } = await formProps?.form?.validateFields();
     await onSuccess(weights);
+    localStorage.setItem('Weight', encodeWeight(weights));
     setDrawerProps((pre) => ({ ...pre, visible: false }));
   }
   function onClose() {
@@ -140,7 +151,11 @@ export default ({
 
   return (
     <DrawerForm
-      formProps={{ ...formProps, onFinish }}
+      formProps={{
+        ...formProps,
+        initialValues: { weights: decodeWeight(localStorage.getItem('Weight')) },
+        onFinish,
+      }}
       drawerProps={{ ...drawerProps, onOk: onFinish, onClose: onClose, title: '计算指标' }}
     >
       <EdiTable

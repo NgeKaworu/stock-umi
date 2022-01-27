@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Button, DatePicker, Form, Space } from 'antd';
+import { Button, DatePicker, Divider, Form, Space } from 'antd';
+import { SyncOutlined } from '@ant-design/icons';
 import SearchForm from '@/js-sdk/components/SearchForm';
 import { restful } from '@/js-sdk/utils/http';
 import { WithSuccess } from '@/js-sdk/Interface/Container';
@@ -23,6 +24,18 @@ export default ({ onSuccess }: WithSuccess<{}>) => {
     }
   }
 
+  async function crawl() {
+    setLoading(true);
+    try {
+      await restful.get(`stock/stockCrawlMany`, {
+        timeout: 0,
+      });
+    } catch {
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <SearchForm formProps={{ onFinish, wrapperCol: void 0, labelCol: void 0 }}>
       <Space>
@@ -32,6 +45,19 @@ export default ({ onSuccess }: WithSuccess<{}>) => {
         <Item>
           <Button htmlType="submit" type="primary" ghost loading={loading}>
             选择时间区间
+          </Button>
+        </Item>
+        <Divider />
+        <Item>
+          <Button
+            danger
+            onClick={crawl}
+            shape="round"
+            ghost
+            loading={loading}
+            icon={<SyncOutlined />}
+          >
+            重爬今日
           </Button>
         </Item>
       </Space>
