@@ -35,6 +35,7 @@
     "unstated-next": "^1.1.0"
   },
   "devDependencies": {
+    "@types/jest": "^27.4.0",
     "@umijs/fabric": "^2.8.1",
     "@umijs/plugin-qiankun": "^2.35.2",
     "@umijs/preset-react": "^1.8.25",
