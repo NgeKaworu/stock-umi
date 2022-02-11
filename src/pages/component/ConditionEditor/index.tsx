@@ -10,6 +10,7 @@ import {
   ButtonProps,
   Typography,
   message,
+  Divider,
 } from 'antd';
 import { Condition, OperatorMap } from '@/pages/component/ConditionEditor/model';
 import { compose } from '@/js-sdk/decorators/utils';
@@ -44,6 +45,8 @@ export default function ConditionEditor<D = any>({
     setData(value);
   }, [value, modal?.visible]);
 
+  const [activeKey, setActiveKey] = useState<string>();
+
   function onShow() {
     setModal((pre) => ({ ...pre, visible: true }));
   }
@@ -70,12 +73,39 @@ export default function ConditionEditor<D = any>({
   const onInputChange: InputProps['onChange'] = (e) =>
     setData(e.currentTarget.value as ConditionEditorData<D>);
 
+  function pack(d: string) {
+    return () => {
+      setData((pre) => ({ [d]: pre }));
+      setActiveKey('表达式');
+    };
+  }
+
+  function extract(d: string) {
+    return () => {
+      setData((pre: any) => pre?.[d]);
+    };
+  }
+
   return (
     <>
       {isValidElement(children) && cloneElement(children, { onClick: onShow })}
 
       <Modal {...modal} width={800} title="编辑条件" onCancel={onHide} onOk={onOk}>
-        <Tabs defaultActiveKey={typeof data === 'object' ? '表达式' : '一般值'}>
+        <Link onClick={pack('left')}>提取到表达式左值</Link>
+        <Divider type="vertical" />
+        <Link onClick={pack('right')}>提取到表达式右值</Link>
+
+        <Divider type="vertical" />
+
+        <Link onClick={extract('left')}>用左值覆盖当前</Link>
+        <Divider type="vertical" />
+        <Link onClick={extract('right')}>用右值覆盖当前</Link>
+
+        <Tabs
+          defaultActiveKey={typeof data === 'object' ? '表达式' : '一般值'}
+          activeKey={activeKey}
+          onChange={setActiveKey}
+        >
           <TabPane tab="一般值" key="一般值">
             <Input
               placeholder="一般值"
