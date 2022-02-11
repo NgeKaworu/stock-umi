@@ -1,3 +1,6 @@
+import isValidValue from '@/js-sdk/utils/isValidValue';
+import { Condition, conditionParse } from '@/pages/component/ConditionEditor/model';
+import { convert2Number, interpolationCondition } from '@/pages/component/ConditionEditor/util';
 import { safeAdd, safeDivision } from '@/utils/number';
 import { Weight, Stock, Sort2Num } from '../model';
 
@@ -25,13 +28,13 @@ self.onerror = (e) => {
 function calc({ weights, dataSource }: { weights: Weight[]; dataSource: Stock[] }) {
   const temp = [...dataSource],
     includesKey = weights?.map((w) => w.field),
-    processed = preprocess(temp, includesKey);
+    processed = avg(temp, includesKey);
   weights?.forEach(sortWeight(processed));
   lock--;
   return processed;
 }
 
-function preprocess(dataSource: Stock[], includesKey: Weight['field'][]): Stock[] {
+function avg(dataSource: Stock[], includesKey: Weight['field'][]): Stock[] {
   const g = group(dataSource);
   let ret: Stock[] = [];
   for (const [_, value] of g) {
@@ -66,11 +69,43 @@ function group(dataSource: Stock[]): Map<string, Stock[]> {
 }
 
 function sortWeight(dataSource: Stock[]) {
-  return ({ isAsc, field, coefficient: coefficient }: Weight) => {
-    dataSource.sort((a, b) => +a?.[field] - +b?.[field] * (Sort2Num?.get(isAsc) ?? 1));
+  return (w: Weight) => {
+    const { isAsc, coefficient } = w;
 
-    dataSource.forEach(
-      (ds, idx, arr) => (ds.grade = ((ds.grade ?? 0) + arr?.length - idx) * coefficient),
+    const scoreGroup = groupByScore(dataSource, w),
+      scoreKeys = [...scoreGroup.keys()];
+
+    scoreKeys.sort((a, b) => +a - +b * (Sort2Num?.get(isAsc) ?? 1));
+
+    scoreKeys.forEach((k, idx, arr) =>
+      scoreGroup
+        .get(k)
+        ?.forEach((ds) => (ds.grade = ((ds.grade ?? 0) + arr?.length - idx) * coefficient)),
     );
   };
+}
+
+function groupByScore(ss: Stock[], w: Weight): Map<number, Stock[]> {
+  const { field, filter } = w;
+  const m = new Map<number, Stock[]>([]);
+
+  ss.forEach((s) => {
+    const f = s[field];
+    if (
+      !isValidValue(f) ||
+      isNaN(Number(f)) ||
+      !conditionParse(convert2Number(interpolationCondition(filter as Condition, '$this', f)))
+    )
+      return;
+
+    const score = Number(f),
+      p = m.get(score);
+    if (p === void 0) {
+      m.set(score, [s]);
+    } else {
+      p.push(s);
+    }
+  });
+
+  return m;
 }

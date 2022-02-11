@@ -50,7 +50,7 @@ export default () => {
       width: 200,
       ellipsis: { tooltip: true, rows: 1, padding: 17 },
     },
-    { title: '评分', dataIndex: 'grade', sorter: sorterHOF('grade') },
+    { title: '评分', dataIndex: 'grade', sorter: sorterHOF('grade'), defaultSortOrder: 'descend' },
 
     { title: '市净率', dataIndex: 'PB', decimal: 2, sorter: sorterHOF('PB') },
     { title: '市盈率', dataIndex: 'PE', decimal: 2, sorter: sorterHOF('PE') },

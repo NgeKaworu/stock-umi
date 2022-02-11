@@ -1,3 +1,3 @@
 export default {
-  'primary-color': 'tomato',
+  'primary-color': '#52c41a',
 };

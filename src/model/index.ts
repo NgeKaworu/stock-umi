@@ -1,3 +1,5 @@
+import { Condition } from '@/pages/component/ConditionEditor/model';
+
 export interface Stock {
   id: string; //ID
   code: string; //股票代码
@@ -22,6 +24,7 @@ export interface Weight {
   field: keyof Stock;
   isAsc: boolean;
   coefficient: number;
+  filter?: Condition;
 }
 
 export const Sort2Num = new Map([

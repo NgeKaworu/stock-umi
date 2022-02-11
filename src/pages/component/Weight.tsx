@@ -12,6 +12,8 @@ import shouldUpdateHOF from '@/js-sdk/decorators/shouldUpdateHOF';
 import isValidValue from '@/js-sdk/utils/isValidValue';
 import Options from '@/js-sdk/utils/Options';
 import SearchSelect from '@/js-sdk/components/SearchSelect';
+import ConditionEditor from './ConditionEditor';
+import { renderCondition } from './ConditionEditor/util';
 
 const { Item, ErrorList } = Form;
 const { Link } = Typography;
@@ -107,6 +109,29 @@ const columns: EdiTableColumnType<Weight>[] = [
     renderFormItem: ({ field }) => (
       <Item {...field} name={[field.name, 'isAsc']} valuePropName="checked">
         <Switch />
+      </Item>
+    ),
+  },
+  {
+    width: 200,
+    title: '过滤条件',
+    renderFormItem: ({ field }) => (
+      <Item
+        dependencies={[['weights', field.name, 'filter']]}
+        noStyle
+        fieldKey={field.fieldKey}
+        key={field.key}
+      >
+        {({ getFieldValue }) => (
+          <Item {...field} name={[field.name, 'filter']}>
+            <ConditionEditor>
+              <div>
+                {renderCondition(getFieldValue(['weights', field.name, 'filter']))}{' '}
+                <Link>编辑条件</Link>
+              </div>
+            </ConditionEditor>
+          </Item>
+        )}
       </Item>
     ),
   },
