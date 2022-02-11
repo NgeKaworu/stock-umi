@@ -94,7 +94,8 @@ function groupByScore(ss: Stock[], w: Weight): Map<number, Stock[]> {
     if (
       !isValidValue(f) ||
       isNaN(Number(f)) ||
-      !conditionParse(convert2Number(interpolationCondition(filter as Condition, '$this', f)))
+      (filter &&
+        !conditionParse(convert2Number(interpolationCondition(filter as Condition, '$this', f))))
     )
       return;
 
