@@ -56,7 +56,7 @@ export default <RecordType extends Record<string, any> = any>({
           const operation = {
             ...originOperation,
             add: (...rows: Parameters<FormListChildrenParams[1]['add']>) =>
-              originOperation?.add({ key: fields?.length, ...rows[0] }, rows[1]),
+              originOperation?.add(rows[0], rows[1]),
           };
 
           const injectColumns: any = columns?.map?.(({ renderFormItem, canDrag, ...column }) => ({
