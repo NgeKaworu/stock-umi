@@ -140,7 +140,7 @@ restful.interceptors.response.use(undefined, (error: CustomError) => {
           key: response.status,
           content: '请先登录',
           onClose: () => {
-            localStorage.clear();
+            localStorage.removeItem('token');
             if (!location.pathname?.toLocaleLowerCase()?.includes('/user-center/login/')) {
               location.replace(`/user-center/login/`);
             }
