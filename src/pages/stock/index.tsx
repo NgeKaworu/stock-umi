@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Steps, Tag, Form, Switch } from 'antd';
 
-import { Stock, Weight as IWeight, Filter as IFilter, fields, tooltipMap } from '../model';
+import { Stock, Weight as IWeight, Filter as IFilter, fields, tooltipMap } from '../../model';
 import isValidValue from '@/js-sdk/utils/isValidValue';
 import Weight from './component/Weight';
 import useDrawerForm from '@/js-sdk/components/DrawerForm/useDrawerForm';
@@ -16,7 +16,7 @@ import {
 } from './component/ConditionEditor/util';
 import { conditionParse, Condition } from './component/ConditionEditor/model';
 
-const worker = new Worker(new URL('../worker/stock.ts', import.meta.url));
+const worker = new Worker(new URL('../../worker/stock.ts', import.meta.url));
 
 const { Step } = Steps;
 

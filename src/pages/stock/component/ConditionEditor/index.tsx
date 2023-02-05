@@ -12,7 +12,7 @@ import {
   message,
   Divider,
 } from 'antd';
-import { Condition, OperatorMap } from '@/pages/component/ConditionEditor/model';
+import { Condition, OperatorMap } from '@/pages/stock/component/ConditionEditor/model';
 import { compose } from '@/js-sdk/decorators/utils';
 import Search from '@/js-sdk/decorators/Select/Search';
 import Options from '@/js-sdk/utils/Options';

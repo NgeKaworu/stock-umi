@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Button, Input } from 'antd';
-import ConditionEditor, { ConditionEditorData } from './component/ConditionEditor';
+import ConditionEditor, { ConditionEditorData } from './stock/component/ConditionEditor';
 import {
   convert2Number,
   interpolationCondition,
   renderCondition,
-} from './component/ConditionEditor/util';
-import { Condition, conditionParse, Operator } from './component/ConditionEditor/model';
+} from './stock/component/ConditionEditor/util';
+import { Condition, conditionParse, Operator } from './stock/component/ConditionEditor/model';
 
 export default () => {
   const [value, setValue] = useState<ConditionEditorData<any>>({

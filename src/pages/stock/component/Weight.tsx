@@ -4,7 +4,7 @@ import { WithSuccess } from '@/js-sdk/Interface/Container';
 
 import { Button, Form, InputNumber, Switch, Typography } from 'antd';
 
-import { fields, tooltipMap, Weight } from '../../model';
+import { fields, tooltipMap, Weight } from '../../../model';
 import EdiTable, { EdiTableColumnType } from '@/js-sdk/components/EdiTable';
 import shouldUpdateHOF from '@/js-sdk/decorators/shouldUpdateHOF';
 import isValidValue from '@/js-sdk/utils/isValidValue';

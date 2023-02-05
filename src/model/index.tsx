@@ -8,7 +8,7 @@
  *
  * Copyright (c) 2023 by fuRan NgeKaworu@gmail.com, All Rights Reserved.
  */
-import { Condition } from '@/pages/component/ConditionEditor/model';
+import { Condition } from '@/pages/stock/component/ConditionEditor/model';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { ReactNode } from 'react';
