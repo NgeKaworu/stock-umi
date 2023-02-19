@@ -13,7 +13,7 @@ import useLightTablePro from '@/js-sdk/components/LightTablePro/hook/useLightTab
 import Position from '@/model/position';
 import { list, deleteOne } from '@/api/position';
 import Editor from './Editor';
-import PositionEditor from '../../list/component/Editor';
+import PositionEditor from '../../position/component/Editor';
 import useModalForm from '@/js-sdk/components/ModalForm/useModalForm';
 import { Button, Space, Typography, Popconfirm, Switch, Card, Form, Descriptions } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
