@@ -2,8 +2,8 @@
  * @Author: fuRan NgeKaworu@gmail.com
  * @Date: 2023-02-04 16:34:30
  * @LastEditors: fuRan NgeKaworu@gmail.com
- * @LastEditTime: 2023-02-04 18:03:10
- * @FilePath: /stock/stock-umi/src/pages/position/list/component/Table.tsx
+ * @LastEditTime: 2023-02-26 18:33:42
+ * @FilePath: /stock/stock-umi/src/pages/position/component/Table.tsx
  * @Description:
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
@@ -11,28 +11,34 @@
 import Table, { LightTableProColumnProps } from '@/js-sdk/components/LightTablePro';
 import useLightTablePro from '@/js-sdk/components/LightTablePro/hook/useLightTablePro';
 import Position from '@/model/position';
-import { list, deleteOne } from '@/api/position';
+import { list } from '@/api/position';
 import Editor from './Editor';
+import ExchangeEditor from '../../exchange/component/Editor';
 import useModalForm from '@/js-sdk/components/ModalForm/useModalForm';
-import { Button, Space, Typography, Popconfirm, Switch, Form } from 'antd';
+import { Space, Typography, Switch, Button, Modal } from 'antd';
+import StockLabel from '@/pages/stock/component/StockLabel';
+import { useHistory } from 'react-router-dom';
 import { PlusOutlined } from '@ant-design/icons';
-import { useQuery } from 'react-query';
-import { cloneElement } from 'react';
-import { Stock } from '@/model';
-import { LightColumnProps } from '@/js-sdk/components/LightTable';
+import create from '@ant-design/icons/lib/components/IconFont';
 const { Link } = Typography;
-const { Item } = Form;
 
 export default () => {
+  const history = useHistory();
   const { actionRef, formRef } = useLightTablePro();
   const editor = useModalForm();
+  const exchangeEditor = useModalForm();
 
-  const sorterHOF: (field: keyof Stock) => LightColumnProps<Stock>['sorter'] = (field) => (a, b) =>
-    Number(a[field]) - Number(b[field]);
-
-  const columns: LightTableProColumnProps<Position & { stock?: Stock; keyword?: string }>[] = [
-    { dataIndex: 'keyword', title: '关键字', hideInTable: true },
-    { dataIndex: ['stock', 'classify'], title: '板块' },
+  const columns: LightTableProColumnProps<Position>[] = [
+    {
+      dataIndex: 'stock',
+      title: '股票',
+      hideInSearch: true,
+      width: 180,
+      render(value) {
+        return <StockLabel stock={value} />;
+      },
+    },
+    { dataIndex: ['stock', 'classify'], title: '板块', hideInSearch: true },
     {
       dataIndex: 'omitempty',
       title: '省略空仓',
@@ -40,17 +46,11 @@ export default () => {
       formItemProps: {
         valuePropName: 'checked',
       },
-      renderFormItem(c, defaultRender, form) {
-        return <Switch defaultChecked />;
+      renderFormItem() {
+        return <Switch />;
       },
     },
 
-    {
-      dataIndex: 'id',
-      title: '股票',
-      hideInSearch: true,
-      copyable: true,
-    },
     { dataIndex: 'yieldRate', title: '收益率', hideInSearch: true },
     { dataIndex: 'totalYield', title: '总收益', hideInSearch: true },
     { dataIndex: ['stock', 'currentPrice'], title: '现价', hideInSearch: true },
@@ -58,26 +58,20 @@ export default () => {
     { dataIndex: 'totalDividend', title: '总派息', hideInSearch: true },
     { dataIndex: 'stopProfit', title: '止盈点', hideInSearch: true },
     { dataIndex: 'stopLoss', title: '止损点', hideInSearch: true },
-    { dataIndex: 'createAt', title: '创建时间', valueType: 'dateTime', hideInSearch: true },
-    { dataIndex: 'updateAt', title: '更新时间', valueType: 'dateTime', hideInSearch: true },
     {
-      dataIndex: 'id',
+      dataIndex: 'code',
       title: '操作',
       hideInSearch: true,
-      render: (id, row) => (
+      width: 200,
+      render: (code, row) => (
         <Space>
+          <Link onClick={createExchange(code)}>新增交易</Link>
+          <Link onClick={viewCodeHistory(code)}>交易历史</Link>
           <Link onClick={edit(row)}>编辑</Link>
-          <Popconfirm title="操作不可逆，请二次确认" onConfirm={remove(id)}>
-            <Link>删除</Link>
-          </Popconfirm>
         </Space>
       ),
     },
   ];
-
-  function create() {
-    editor.setModalProps((pre) => ({ ...pre, visible: true, title: '新增' }));
-  }
 
   function edit(row: Position) {
     return () => {
@@ -86,24 +80,39 @@ export default () => {
     };
   }
 
-  function remove(id: Position['id']) {
-    return async () => {
-      try {
-        await deleteOne(id, { notify: true });
-        actionRef.current?.reload?.();
-      } catch {}
+  function editSuccess() {
+    actionRef.current?.reload?.();
+  }
+
+  function viewCodeHistory(code: string) {
+    return () => history.push(`/exchange/${code}`);
+  }
+
+  function createExchange(code?: string) {
+    return () => {
+      exchangeEditor.setModalProps((pre) => ({ ...pre, visible: true, title: '新增' }));
+      exchangeEditor.form.setFieldsValue({ code });
+
+      exchangeEditor.setData({ code });
     };
   }
 
-  function editSuccess() {
+  function createExchangeSuccess(code: string) {
     actionRef.current?.reload?.();
+    Modal.confirm({
+      title: '提示',
+      content: '是否跳转详情页',
+      onOk: viewCodeHistory(code),
+    });
   }
 
   return (
     <>
       <Editor {...editor} onSuccess={editSuccess} />
+      <ExchangeEditor {...exchangeEditor} onSuccess={createExchangeSuccess} />
+
       <Table
-        rowKey={'id'}
+        rowKey={'code'}
         columns={columns}
         actionRef={actionRef}
         formRef={formRef}
@@ -112,17 +121,20 @@ export default () => {
         }}
         headerTitle={
           <Space>
-            <Button icon={<PlusOutlined />} type="primary" ghost onClick={create}>
+            <Button icon={<PlusOutlined />} type="primary" ghost onClick={createExchange()}>
               新增
             </Button>
           </Space>
         }
+        scroll={{
+          x: 'max-content',
+          y: '100%',
+        }}
         queryOptions={{ refetchOnWindowFocus: false }}
         request={async (params, pagination) => {
-          console.log('params', params);
           const res = await list({
             params: {
-              keyword: params?.keyword,
+              ...params,
               skip: (pagination?.current ?? 0) * (pagination?.pageSize ?? 0),
               limit: pagination?.pageSize,
             },

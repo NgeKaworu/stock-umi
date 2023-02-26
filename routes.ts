@@ -2,7 +2,7 @@
  * @Author: fuRan NgeKaworu@gmail.com
  * @Date: 2022-02-11 13:51:09
  * @LastEditors: fuRan NgeKaworu@gmail.com
- * @LastEditTime: 2023-02-13 15:55:08
+ * @LastEditTime: 2023-02-25 22:37:39
  * @FilePath: /stock/stock-umi/routes.ts
  * @Description:
  *
@@ -17,7 +17,7 @@ export default [
       { path: '/lab', component: 'lab' },
 
       { path: '/position', component: 'position' },
-      { path: '/exchange/:bourseCode', component: 'exchange' },
+      { path: '/exchange/:code', component: 'exchange' },
     ],
   },
 ];

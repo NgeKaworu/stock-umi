@@ -1,46 +1,98 @@
 /*
  * @Author: fuRan NgeKaworu@gmail.com
- * @Date: 2023-02-04 16:34:30
+ * @Date: 2023-02-04 18:12:36
  * @LastEditors: fuRan NgeKaworu@gmail.com
- * @LastEditTime: 2023-02-05 14:54:03
- * @FilePath: /stock/stock-umi/src/pages/position/detail/component/Table.tsx
+ * @LastEditTime: 2023-02-26 17:43:45
+ * @FilePath: /stock/stock-umi/src/pages/exchange/component/Table.tsx
  * @Description:
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
  */
-import Table, { LightTableProColumnProps } from '@/js-sdk/components/LightTablePro';
-import useLightTablePro from '@/js-sdk/components/LightTablePro/hook/useLightTablePro';
+
+import { LightTableProColumnProps } from '@/js-sdk/components/LightTablePro';
 import Position from '@/model/position';
-import { list, deleteOne } from '@/api/position';
+import { detail } from '@/api/position';
+import { list, deleteOne } from '@/api/exchange';
 import Editor from './Editor';
 import PositionEditor from '../../position/component/Editor';
 import useModalForm from '@/js-sdk/components/ModalForm/useModalForm';
-import { Button, Space, Typography, Popconfirm, Switch, Card, Form, Descriptions } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import {
+  Button,
+  Space,
+  Typography,
+  Popconfirm,
+  Card,
+  Descriptions,
+  TablePaginationConfig,
+  Tooltip,
+} from 'antd';
+import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useQuery } from 'react-query';
-import { cloneElement } from 'react';
-import { Stock } from '@/model';
-import LightTable, { LightColumnProps } from '@/js-sdk/components/LightTable';
+import { useState } from 'react';
+import LightTable from '@/js-sdk/components/LightTable';
+import { useParams } from 'react-router';
+import Exchange from '@/model/exchange';
+import StockLabel from '@/pages/stock/component/StockLabel';
+import { safeAdd, safeDivision, safeMultiply, safeNumber } from '@/utils/number';
 
-const { Link } = Typography;
-const { Item } = Form;
+const { Text, Link } = Typography;
 const DescriptionsItem = Descriptions.Item;
 
 export default () => {
-  const { actionRef, formRef } = useLightTablePro();
   const editor = useModalForm();
   const positionEditor = useModalForm();
+  const { code }: any = useParams();
+  const [[pages, pageSize], setPagePair] = useState<
+    Parameters<NonNullable<TablePaginationConfig['onChange']>>
+  >([1, 10]);
 
-  const sorterHOF: (field: keyof Stock) => LightColumnProps<Stock>['sorter'] = (field) => (a, b) =>
-    Number(a[field]) - Number(b[field]);
+  const positionDetail = useQuery(
+    ['position-detail', code],
+    () => detail(code, { params: { omitempty: false } }),
+    {
+      enabled: !!code,
+    },
+  );
 
-  const columns: LightTableProColumnProps<Position & { stock?: Stock; keyword?: string }>[] = [
+  const exchangeList = useQuery(
+    ['exchange-list', code, pages, pageSize],
+    () =>
+      list(code, {
+        params: {
+          limit: pageSize,
+          skip: (pages - 1) * (pageSize ?? 10),
+        },
+      }),
+    {
+      enabled: !!code,
+    },
+  );
+
+  const reload = () => {
+    positionDetail.refetch();
+    exchangeList.refetch();
+  };
+
+  const tablePaginationConfig: TablePaginationConfig = {
+    showSizeChanger: true,
+    current: pages,
+    pageSize,
+    total: exchangeList?.data?.total,
+    onChange: (...args) => setPagePair(args),
+  };
+
+  const columns: LightTableProColumnProps<Exchange>[] = [
     { dataIndex: 'createAt', title: '交易时间', valueType: 'dateTime' },
-    { dataIndex: 'transactionPrice', title: '成交价' },
-    { dataIndex: 'currentShare', title: '交易股份' },
-    { dataIndex: 'currentCapital', title: '本次投入' },
-    { dataIndex: 'currentDividend', title: '本次派息' },
-    { dataIndex: 'comparative', title: '环比增长' },
+    {
+      dataIndex: 'currentCapital',
+      title: '成交金额',
+      render(_, { currentShare, transactionPrice }) {
+        return `¥${safeMultiply(currentShare, transactionPrice)}`;
+      },
+    },
+    { dataIndex: 'transactionPrice', title: '成交价格', prefix: '¥' },
+    { dataIndex: 'currentShare', title: '成交数量' },
+    { dataIndex: 'currentDividend', title: '本次派息', prefix: '¥' },
     {
       dataIndex: 'id',
       title: '操作',
@@ -57,30 +109,35 @@ export default () => {
 
   function create() {
     editor.setModalProps((pre) => ({ ...pre, visible: true, title: '新增' }));
+    editor.form.setFieldsValue({ code });
+
+    editor.setData({ code });
   }
 
-  function edit(row: Position) {
+  function edit(row: Exchange) {
     return () => {
       editor.setModalProps((pre) => ({ ...pre, visible: true, title: '编辑' }));
       editor.form.setFieldsValue(row);
+
+      editor.setData({ code });
     };
   }
 
-  function remove(id: Position['id']) {
+  function remove(id: Exchange['id']) {
     return async () => {
       try {
         await deleteOne(id, { notify: true });
-        actionRef.current?.reload?.();
+        reload();
       } catch {}
     };
   }
 
   function editSuccess() {
-    actionRef.current?.reload?.();
+    reload();
   }
 
   function positionEditSuccess() {
-    actionRef.current?.reload?.();
+    reload();
   }
 
   function editPosition(row: Position) {
@@ -90,6 +147,13 @@ export default () => {
     };
   }
 
+  const positionData = positionDetail?.data?.data,
+    { stock, totalShare, totalCapital, totalDividend, stopProfit, stopLoss } = positionData ?? {};
+
+  const marketCapitalization = safeMultiply(stock?.currentPrice, totalShare).toFixed(3),
+    revenue = safeAdd(marketCapitalization, -totalCapital!, totalDividend).toFixed(3),
+    revenueRate = (safeDivision(revenue, totalCapital) * 100).toFixed(3);
+
   return (
     <>
       <Editor {...editor} onSuccess={editSuccess} />
@@ -98,19 +162,57 @@ export default () => {
       <Card size="small">
         <Space direction="vertical" style={{ width: '100%' }}>
           <Descriptions
-            title="股票名称"
+            title={
+              <>
+                <b>股票名称: </b> {stock && <StockLabel stock={stock} />}
+              </>
+            }
             bordered
-            extra={<Link onClick={editPosition({})}>编辑</Link>}
+            extra={<Link onClick={editPosition(positionData!)}>编辑</Link>}
           >
-            <DescriptionsItem label="收益率"> 收益率 </DescriptionsItem>
-            <DescriptionsItem label="总收益"> 总收益</DescriptionsItem>
-            <DescriptionsItem label="现价"> 现价</DescriptionsItem>
-            <DescriptionsItem label="现值"> 现值</DescriptionsItem>
-            <DescriptionsItem label="总股本"> 总股本</DescriptionsItem>
-            <DescriptionsItem label="总股权"> 总股权</DescriptionsItem>
-            <DescriptionsItem label="总派息"> 总派息</DescriptionsItem>
-            <DescriptionsItem label="止盈点"> 止盈点</DescriptionsItem>
-            <DescriptionsItem label="止损点"> 止损点</DescriptionsItem>
+            <DescriptionsItem label="现价">
+              {stock?.currentPrice !== void 0 ? `¥${stock?.currentPrice}` : '-'}
+            </DescriptionsItem>
+            <DescriptionsItem label="市值">
+              {marketCapitalization !== void 0 ? `¥${marketCapitalization}` : '-'}
+            </DescriptionsItem>
+            <DescriptionsItem label="总投入">
+              {totalCapital !== void 0 ? `¥${totalCapital}` : '-'}
+            </DescriptionsItem>
+            <DescriptionsItem label="总营收">
+              <Text type={safeNumber(revenue) > 0 ? 'success' : 'danger'}>
+                {`¥${revenue}` ?? '-'}
+              </Text>
+            </DescriptionsItem>
+            <DescriptionsItem label="总股份">{totalShare ?? '-'}</DescriptionsItem>
+            <DescriptionsItem label="总派息">
+              {totalDividend !== void 0 ? `¥${totalDividend}` : '-'}
+            </DescriptionsItem>
+            <DescriptionsItem label="营收率">
+              {(safeNumber(revenueRate) >= safeNumber(stopProfit) ||
+                safeNumber(revenueRate) <= safeNumber(stopLoss)) && (
+                <>
+                  <Tooltip
+                    title={`超过${
+                      safeNumber(revenueRate) >= safeNumber(stopProfit) ? '止盈' : '止损'
+                    }点，请及时${
+                      safeNumber(revenueRate) >= safeNumber(stopProfit) ? '止盈' : '止损'
+                    }`}
+                  >
+                    <InfoCircleOutlined />
+                  </Tooltip>{' '}
+                </>
+              )}
+              <Text type={safeNumber(revenueRate) > 0 ? 'success' : 'danger'}>
+                {`${revenueRate}%` ?? '-'}
+              </Text>
+            </DescriptionsItem>
+            <DescriptionsItem label="止盈点">
+              <Text type="success">{stopProfit ? `${stopProfit}%` : '-'}</Text>
+            </DescriptionsItem>
+            <DescriptionsItem label="止损点">
+              <Text type="danger">{stopLoss ? `${stopLoss}%` : '-'}</Text>
+            </DescriptionsItem>
           </Descriptions>
           <Space>
             <Button icon={<PlusOutlined />} type="primary" ghost onClick={create}>
@@ -121,8 +223,9 @@ export default () => {
             columnEmptyText="-"
             columns={columns}
             scroll={{ x: 'max-content' }}
-            rowKey={(r) => `${r.bourse}${r.code}`}
-            dataSource={[]}
+            rowKey={(r) => r.id}
+            dataSource={exchangeList?.data?.data}
+            pagination={tablePaginationConfig}
           />
         </Space>
       </Card>

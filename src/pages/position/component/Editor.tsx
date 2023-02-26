@@ -2,21 +2,20 @@
  * @Author: fuRan NgeKaworu@gmail.com
  * @Date: 2023-02-04 16:14:33
  * @LastEditors: fuRan NgeKaworu@gmail.com
- * @LastEditTime: 2023-02-04 18:05:58
- * @FilePath: /stock/stock-umi/src/pages/position/list/component/Editor.tsx
+ * @LastEditTime: 2023-02-26 15:19:06
+ * @FilePath: /stock/stock-umi/src/pages/position/component/Editor.tsx
  * @Description:
  *
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved.
  */
-import { Form, Input, InputNumber, Typography } from 'antd';
+import { Form, Input, InputNumber } from 'antd';
 
 import ModalForm from '@/js-sdk/components/ModalForm';
 import type useModalForm from '@/js-sdk/components/ModalForm/useModalForm';
 
-import { update, create } from '@/api/position';
+import { update } from '@/api/position';
 
 const { Item } = Form;
-const { Link } = Typography;
 
 export default ({
   formProps,
@@ -33,14 +32,10 @@ export default ({
     const value = await form?.validateFields();
     try {
       setModalProps((pre) => ({ ...pre, confirmLoading: true }));
-      let api;
       if (inEdit) {
-        api = update;
-      } else {
-        api = create;
+        await update(value.code, value);
       }
 
-      await api(value);
       await onSuccess?.();
       setModalProps((pre) => ({ ...pre, visible: false }));
       form.resetFields();
@@ -54,6 +49,9 @@ export default ({
       formProps={{ onFinish: onSubmit, ...formProps }}
       modalProps={{ onOk: onSubmit, ...modalProps }}
     >
+      <Item name="code" hidden>
+        <Input disabled />
+      </Item>
       <Item name="stopProfit" label="止盈点" rules={[{ required: true }]}>
         <InputNumber placeholder="请输入" />
       </Item>

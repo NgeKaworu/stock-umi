@@ -15,6 +15,7 @@ import {
   renderCondition,
 } from './component/ConditionEditor/util';
 import { conditionParse, Condition } from './component/ConditionEditor/model';
+import StockLabel from './component/StockLabel';
 
 const worker = new Worker(new URL('../../worker/stock.ts', import.meta.url));
 
@@ -63,20 +64,7 @@ export default () => {
     {
       title: '股票',
       dataIndex: 'mixed',
-      render: (_, r) => (
-        <>
-          <a
-            href={`https://quote.eastmoney.com/${r.bourse}${r.code}.html#fullScreenChart`}
-            target="_blank"
-          >
-            {r.bourse}
-            {r.code}
-          </a>{' '}
-          <a href={`https://www.google.com/search?q=${r.name}&oq=${r.name}`} target="_blank">
-            {r.name}
-          </a>
-        </>
-      ),
+      render: (_, r) => <StockLabel stock={r} />,
       width: 200,
     },
     {

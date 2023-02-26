@@ -2,7 +2,7 @@
  * @Author: fuRan NgeKaworu@gmail.com
  * @Date: 2022-02-11 13:51:09
  * @LastEditors: fuRan NgeKaworu@gmail.com
- * @LastEditTime: 2023-01-25 18:39:57
+ * @LastEditTime: 2023-02-26 14:32:08
  * @FilePath: /stock/stock-umi/src/model/index.tsx
  * @Description:
  *
@@ -31,6 +31,7 @@ export interface Stock {
   name: string; //股票名字
   createAt: Date; // 创建时间
   grade: number; // 评分
+  currentPrice: number; //现价
 }
 
 export interface Weight {
