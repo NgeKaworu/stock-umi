@@ -2,7 +2,7 @@
  * @Author: fuRan NgeKaworu@gmail.com
  * @Date: 2023-02-04 18:12:36
  * @LastEditors: fuRan NgeKaworu@gmail.com
- * @LastEditTime: 2023-02-26 17:43:45
+ * @LastEditTime: 2023-02-26 19:06:31
  * @FilePath: /stock/stock-umi/src/pages/exchange/component/Table.tsx
  * @Description:
  *
@@ -28,7 +28,7 @@ import {
 } from 'antd';
 import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useQuery } from 'react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import LightTable from '@/js-sdk/components/LightTable';
 import { useParams } from 'react-router';
 import Exchange from '@/model/exchange';
@@ -46,11 +46,22 @@ export default () => {
     Parameters<NonNullable<TablePaginationConfig['onChange']>>
   >([1, 10]);
 
+  useEffect(() => {
+    if (code) {
+      document.title = code;
+    }
+  }, [code]);
+
   const positionDetail = useQuery(
     ['position-detail', code],
     () => detail(code, { params: { omitempty: false } }),
     {
       enabled: !!code,
+      onSuccess(res) {
+        if (res.data?.stock?.name) {
+          document.title = `${res.data?.stock.code} - ${res.data?.stock.name}`;
+        }
+      },
     },
   );
 

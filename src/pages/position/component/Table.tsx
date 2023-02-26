@@ -2,7 +2,7 @@
  * @Author: fuRan NgeKaworu@gmail.com
  * @Date: 2023-02-04 16:34:30
  * @LastEditors: fuRan NgeKaworu@gmail.com
- * @LastEditTime: 2023-02-26 18:33:42
+ * @LastEditTime: 2023-02-26 19:18:56
  * @FilePath: /stock/stock-umi/src/pages/position/component/Table.tsx
  * @Description:
  *
@@ -15,15 +15,14 @@ import { list } from '@/api/position';
 import Editor from './Editor';
 import ExchangeEditor from '../../exchange/component/Editor';
 import useModalForm from '@/js-sdk/components/ModalForm/useModalForm';
-import { Space, Typography, Switch, Button, Modal } from 'antd';
+import { Space, Typography, Switch, Button, Modal, Tooltip } from 'antd';
 import StockLabel from '@/pages/stock/component/StockLabel';
-import { useHistory } from 'react-router-dom';
-import { PlusOutlined } from '@ant-design/icons';
-import create from '@ant-design/icons/lib/components/IconFont';
-const { Link } = Typography;
+
+import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { safeMultiply, safeAdd, safeDivision, safeNumber } from '@/utils/number';
+const { Link, Text } = Typography;
 
 export default () => {
-  const history = useHistory();
   const { actionRef, formRef } = useLightTablePro();
   const editor = useModalForm();
   const exchangeEditor = useModalForm();
@@ -51,18 +50,79 @@ export default () => {
       },
     },
 
-    { dataIndex: 'yieldRate', title: '收益率', hideInSearch: true },
-    { dataIndex: 'totalYield', title: '总收益', hideInSearch: true },
-    { dataIndex: ['stock', 'currentPrice'], title: '现价', hideInSearch: true },
-    { dataIndex: 'totalCapital', title: '总投入', hideInSearch: true },
-    { dataIndex: 'totalDividend', title: '总派息', hideInSearch: true },
-    { dataIndex: 'stopProfit', title: '止盈点', hideInSearch: true },
-    { dataIndex: 'stopLoss', title: '止损点', hideInSearch: true },
+    {
+      dataIndex: 'totalYield',
+      title: '总收益',
+
+      hideInSearch: true,
+      render(_, positionData) {
+        const { stock, totalShare, totalCapital, totalDividend } = positionData ?? {};
+
+        const marketCapitalization = safeMultiply(stock?.currentPrice, totalShare).toFixed(3),
+          revenue = safeAdd(marketCapitalization, -totalCapital!, totalDividend).toFixed(3);
+
+        return (
+          <Text type={safeNumber(revenue) > 0 ? 'success' : 'danger'}>{`¥${revenue}` ?? '-'}</Text>
+        );
+      },
+    },
+    {
+      dataIndex: 'yieldRate',
+      title: '收益率',
+      hideInSearch: true,
+      render(_, positionData) {
+        const { stock, totalShare, totalCapital, totalDividend, stopProfit, stopLoss } =
+          positionData ?? {};
+
+        const marketCapitalization = safeMultiply(stock?.currentPrice, totalShare).toFixed(3),
+          revenue = safeAdd(marketCapitalization, -totalCapital!, totalDividend).toFixed(3),
+          revenueRate = (safeDivision(revenue, totalCapital) * 100).toFixed(3);
+        {
+          (safeNumber(revenueRate) >= safeNumber(stopProfit) ||
+            safeNumber(revenueRate) <= safeNumber(stopLoss)) && (
+            <>
+              <Tooltip
+                title={`超过${
+                  safeNumber(revenueRate) >= safeNumber(stopProfit) ? '止盈' : '止损'
+                }点，请及时${safeNumber(revenueRate) >= safeNumber(stopProfit) ? '止盈' : '止损'}`}
+              >
+                <InfoCircleOutlined />
+              </Tooltip>{' '}
+            </>
+          );
+        }
+        return (
+          <Text type={safeNumber(revenueRate) > 0 ? 'success' : 'danger'}>
+            {`${revenueRate}%` ?? '-'}
+          </Text>
+        );
+      },
+    },
+    { dataIndex: ['stock', 'currentPrice'], title: '现价', hideInSearch: true, prefix: '¥' },
+    { dataIndex: 'totalCapital', title: '总投入', hideInSearch: true, prefix: '¥' },
+    { dataIndex: 'totalDividend', title: '总派息', hideInSearch: true, prefix: '¥' },
+    {
+      dataIndex: 'stopProfit',
+      title: '止盈点',
+      hideInSearch: true,
+      render(stopProfit) {
+        return stopProfit !== void 0 ? <Text type="success">{stopProfit}% </Text> : '-';
+      },
+    },
+    {
+      dataIndex: 'stopLoss',
+      title: '止损点',
+      hideInSearch: true,
+      render(stopLoss) {
+        return stopLoss !== void 0 ? <Text type="danger">{stopLoss}% </Text> : '-';
+      },
+    },
     {
       dataIndex: 'code',
       title: '操作',
       hideInSearch: true,
       width: 200,
+      fixed: 'right',
       render: (code, row) => (
         <Space>
           <Link onClick={createExchange(code)}>新增交易</Link>
@@ -85,7 +145,9 @@ export default () => {
   }
 
   function viewCodeHistory(code: string) {
-    return () => history.push(`/exchange/${code}`);
+    return () => {
+      window.open(`/exchange/${code}`);
+    };
   }
 
   function createExchange(code?: string) {
