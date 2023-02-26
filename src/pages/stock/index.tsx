@@ -118,7 +118,7 @@ export default () => {
 
   function viewCodeHistory(code: string) {
     return () => {
-      window.open(`/exchange/${code}`);
+      window.open(`/stock/exchange/${code}`);
     };
   }
 

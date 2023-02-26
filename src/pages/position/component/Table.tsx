@@ -2,7 +2,7 @@
  * @Author: fuRan NgeKaworu@gmail.com
  * @Date: 2023-02-04 16:34:30
  * @LastEditors: fuRan NgeKaworu@gmail.com
- * @LastEditTime: 2023-02-26 19:18:56
+ * @LastEditTime: 2023-02-26 20:20:16
  * @FilePath: /stock/stock-umi/src/pages/position/component/Table.tsx
  * @Description:
  *
@@ -146,7 +146,7 @@ export default () => {
 
   function viewCodeHistory(code: string) {
     return () => {
-      window.open(`/exchange/${code}`);
+      window.open(`/stock/exchange/${code}`);
     };
   }
 
